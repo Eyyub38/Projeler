@@ -1,21 +1,37 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Codes\\Projects\\PokemonData\\",
+  "WorkspaceRootPath": "D:\\Projeler\\PokemonData\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\codes\\projects\\pokemondata\\pokemondata\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\projeler\\pokemondata\\pokemondata\\services\\pokemonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\services\\pokemonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Codes\\Projects\\PokemonData\\pokemondata\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\projeler\\pokemondata\\pokemondata\\pokemonentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\pokemonentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\projeler\\pokemondata\\pokemondata\\models\\move.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\models\\move.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\projeler\\pokemondata\\pokemondata\\viewmodels\\itemviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\viewmodels\\itemviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Projeler\\PokemonData\\pokemondata\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|d:\\codes\\projects\\pokemondata\\pokemondata\\jsonhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\jsonhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Projeler\\PokemonData\\pokemondata\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Codes\\Projects\\PokemonData\\pokemondata\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Projeler\\PokemonData\\pokemondata\\models\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\models\\item.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|D:\\Projeler\\PokemonData\\pokemondata\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ADA46640-D0C2-434B-8F16-308350B57757}|PokemonData\\PokemonData.csproj|solutionrelative:pokemondata\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -30,54 +46,109 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "JsonHelper.cs",
-              "DocumentMoniker": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\JsonHelper.cs",
-              "RelativeDocumentMoniker": "PokemonData\\JsonHelper.cs",
-              "ToolTip": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\JsonHelper.cs",
-              "RelativeToolTip": "PokemonData\\JsonHelper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "Item.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\Models\\Item.cs",
+              "RelativeDocumentMoniker": "PokemonData\\Models\\Item.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\Models\\Item.cs",
+              "RelativeToolTip": "PokemonData\\Models\\Item.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACEAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-07T02:51:03.433Z",
+              "WhenOpened": "2025-05-07T08:14:09.731Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Move.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\Models\\Move.cs",
+              "RelativeDocumentMoniker": "PokemonData\\Models\\Move.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\Models\\Move.cs",
+              "RelativeToolTip": "PokemonData\\Models\\Move.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAABwAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-07T08:14:29.655Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PokemonService.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\Services\\PokemonService.cs",
+              "RelativeDocumentMoniker": "PokemonData\\Services\\PokemonService.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\Services\\PokemonService.cs",
+              "RelativeToolTip": "PokemonData\\Services\\PokemonService.cs",
+              "ViewState": "AgIAAA4BAAAAAAAAAAAqwCsBAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-07T10:22:47.884Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "PokemonEntry.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\PokemonEntry.cs",
+              "RelativeDocumentMoniker": "PokemonData\\PokemonEntry.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\PokemonEntry.cs",
+              "RelativeToolTip": "PokemonData\\PokemonEntry.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-07T10:22:45.62Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ItemViewModel.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\ViewModels\\ItemViewModel.cs",
+              "RelativeDocumentMoniker": "PokemonData\\ViewModels\\ItemViewModel.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\ViewModels\\ItemViewModel.cs",
+              "RelativeToolTip": "PokemonData\\ViewModels\\ItemViewModel.cs",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAAAE0AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-07T08:26:04.173Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "MainForm.Designer.cs",
-              "DocumentMoniker": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\MainForm.Designer.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\MainForm.Designer.cs",
               "RelativeDocumentMoniker": "PokemonData\\MainForm.Designer.cs",
-              "ToolTip": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\MainForm.Designer.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\MainForm.Designer.cs",
               "RelativeToolTip": "PokemonData\\MainForm.Designer.cs",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAAAAQAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAAAPkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-06T22:01:37.671Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "MainForm.cs",
-              "DocumentMoniker": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\MainForm.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\MainForm.cs",
               "RelativeDocumentMoniker": "PokemonData\\MainForm.cs",
-              "ToolTip": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\MainForm.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\MainForm.cs",
               "RelativeToolTip": "PokemonData\\MainForm.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAADwv14AAABSAAAAAAAAAA==",
+              "ViewState": "AgIAABQBAAAAAAAAAAD4vwACAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-06T22:01:13.435Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\Program.cs",
+              "DocumentMoniker": "D:\\Projeler\\PokemonData\\PokemonData\\Program.cs",
               "RelativeDocumentMoniker": "PokemonData\\Program.cs",
-              "ToolTip": "D:\\Codes\\Projects\\PokemonData\\PokemonData\\Program.cs",
+              "ToolTip": "D:\\Projeler\\PokemonData\\PokemonData\\Program.cs",
               "RelativeToolTip": "PokemonData\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-06T22:00:30.739Z"
+              "WhenOpened": "2025-05-06T22:00:30.739Z",
+              "EditorCaption": ""
             }
           ]
         }
