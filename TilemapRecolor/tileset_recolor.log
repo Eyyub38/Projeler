@@ -140,3 +140,33 @@ AttributeError: 'QWidget' object has no attribute 'update_preview'
 2025-05-08 07:24:52,790 - INFO - Opening save dialog for palette
 2025-05-08 07:24:57,646 - INFO - Saving palette to: D:/Codes/Projects/TilemapRecolor/ab.png
 2025-05-08 07:24:57,647 - INFO - Palette saved successfully
+2025-05-09 00:20:53,797 - INFO - Starting application
+2025-05-09 00:20:53,846 - INFO - Initializing UI
+2025-05-09 00:20:53,860 - INFO - UI initialization completed
+2025-05-09 00:20:54,572 - INFO - Application started successfully
+2025-05-09 00:20:57,179 - INFO - Opening file dialog for tileset
+2025-05-09 00:22:02,141 - INFO - Loading tileset from: D:/Game Development/Assets/Pokemon Trainer/Assets/Art/World/Tilesets/New/Amp-Plains.png
+2025-05-09 00:22:02,365 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-09 00:22:02,366 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-09 00:22:02,366 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-09 00:22:02,376 - INFO - Extracting palette from tileset
+2025-05-09 00:22:02,833 - INFO - Found 31 colors in palette
+2025-05-09 00:22:02,836 - INFO - Updating palette buttons
+2025-05-09 00:22:02,836 - INFO - Updating palette buttons
+2025-05-09 00:22:02,842 - INFO - Created 31 color buttons
+2025-05-09 00:22:02,842 - INFO - Updating previews
+2025-05-09 00:22:02,843 - INFO - Creating color mapping
+2025-05-09 00:22:02,843 - INFO - Recoloring tileset
+2025-05-09 00:22:03,117 - INFO - Converting recolored tileset to pixmap
+2025-05-09 00:22:10,126 - INFO - Creating color mapping
+2025-05-09 00:22:10,127 - INFO - Recoloring tileset
+2025-05-09 00:22:10,377 - INFO - Converting recolored tileset to pixmap
+2025-05-09 00:22:14,634 - INFO - Creating color mapping
+2025-05-09 00:22:14,635 - INFO - Recoloring tileset
+2025-05-09 00:22:14,886 - INFO - Converting recolored tileset to pixmap
+2025-05-09 00:22:17,135 - INFO - Opening save dialog for palette
+2025-05-09 00:22:26,874 - INFO - Saving palette to: C:/Users/erenb/OneDrive/Masaüstü/ab.png
+2025-05-09 00:22:26,876 - INFO - Palette saved successfully
+2025-05-09 00:22:29,209 - INFO - Opening save dialog for tileset
+2025-05-09 00:22:32,319 - INFO - Saving tileset to: C:/Users/erenb/OneDrive/Masaüstü/a.png
+2025-05-09 00:22:32,586 - INFO - Tileset saved successfully
