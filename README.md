@@ -1,0 +1,1 @@
+This repository is about supportive program ideas for my Pokemon game. I build all of them with AI. So they are my ideas and my projetcs but they codded by AI. I use to Cursor for making these projects.
