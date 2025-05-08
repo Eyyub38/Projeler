@@ -1,0 +1,142 @@
+2025-05-08 07:19:43,327 - INFO - Starting application
+2025-05-08 07:19:43,342 - INFO - Initializing UI
+2025-05-08 07:19:43,346 - INFO - UI initialization completed
+2025-05-08 07:19:44,175 - INFO - Application started successfully
+2025-05-08 07:19:46,554 - INFO - Opening file dialog for tileset
+2025-05-08 07:19:49,585 - INFO - Loading tileset from: D:/Codes/Projects/TilemapRecolor/TileMap.png
+2025-05-08 07:19:49,605 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-08 07:19:49,606 - DEBUG - STREAM b'gAMA' 41 4
+2025-05-08 07:19:49,606 - DEBUG - STREAM b'IDAT' 57 8192
+2025-05-08 07:19:49,610 - INFO - Extracting palette from tileset
+2025-05-08 07:19:49,739 - INFO - Found 25 colors in palette
+2025-05-08 07:19:49,739 - INFO - Updating palette buttons
+2025-05-08 07:19:49,739 - INFO - Updating palette buttons
+2025-05-08 07:19:49,743 - INFO - Created 25 color buttons
+2025-05-08 07:19:49,743 - INFO - Updating previews
+2025-05-08 07:19:49,743 - INFO - Updating previews
+2025-05-08 07:19:49,744 - INFO - Converting original tileset to pixmap
+2025-05-08 07:19:49,744 - DEBUG - Converting PIL image to QPixmap
+2025-05-08 07:20:23,271 - INFO - Starting application
+2025-05-08 07:20:23,287 - INFO - Initializing UI
+2025-05-08 07:20:23,294 - INFO - UI initialization completed
+2025-05-08 07:20:24,216 - INFO - Application started successfully
+2025-05-08 07:20:25,817 - INFO - Opening file dialog for tileset
+2025-05-08 07:20:28,305 - INFO - Loading tileset from: D:/Codes/Projects/TilemapRecolor/TileMap.png
+2025-05-08 07:20:28,324 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-08 07:20:28,325 - DEBUG - STREAM b'gAMA' 41 4
+2025-05-08 07:20:28,325 - DEBUG - STREAM b'IDAT' 57 8192
+2025-05-08 07:20:28,330 - INFO - Extracting palette from tileset
+2025-05-08 07:20:28,467 - INFO - Found 25 colors in palette
+2025-05-08 07:20:28,468 - INFO - Updating palette buttons
+2025-05-08 07:20:28,468 - INFO - Updating palette buttons
+2025-05-08 07:20:28,471 - INFO - Created 25 color buttons
+2025-05-08 07:20:28,472 - INFO - Updating previews
+2025-05-08 07:20:28,472 - INFO - Updating previews
+2025-05-08 07:20:28,472 - INFO - Converting original tileset to pixmap
+2025-05-08 07:20:28,472 - DEBUG - Converting PIL image to QPixmap
+2025-05-08 07:21:19,344 - INFO - Starting application
+2025-05-08 07:21:19,366 - INFO - Initializing UI
+2025-05-08 07:21:19,373 - INFO - UI initialization completed
+2025-05-08 07:21:20,203 - INFO - Application started successfully
+2025-05-08 07:21:22,197 - INFO - Opening file dialog for tileset
+2025-05-08 07:21:24,281 - INFO - Loading tileset from: D:/Codes/Projects/TilemapRecolor/TileMap.png
+2025-05-08 07:21:24,353 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-08 07:21:24,353 - DEBUG - STREAM b'gAMA' 41 4
+2025-05-08 07:21:24,353 - DEBUG - STREAM b'IDAT' 57 8192
+2025-05-08 07:21:24,357 - INFO - Extracting palette from tileset
+2025-05-08 07:21:24,482 - INFO - Found 25 colors in palette
+2025-05-08 07:21:24,484 - INFO - Updating palette buttons
+2025-05-08 07:21:24,484 - INFO - Updating palette buttons
+2025-05-08 07:21:24,487 - INFO - Created 25 color buttons
+2025-05-08 07:21:24,488 - INFO - Updating previews
+2025-05-08 07:21:24,488 - INFO - Creating color mapping
+2025-05-08 07:21:24,488 - INFO - Recoloring tileset
+2025-05-08 07:21:24,628 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:21:32,090 - INFO - Opening save dialog for palette
+2025-05-08 07:21:38,132 - ERROR - Error changing color: 'QWidget' object has no attribute 'update_preview'
+Traceback (most recent call last):
+  File "D:\Codes\Projects\TilemapRecolor\tileset_recolor_gui.py", line 37, in change_color
+    self.parent().update_preview()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'QWidget' object has no attribute 'update_preview'
+2025-05-08 07:22:11,632 - ERROR - Error changing color: 'QWidget' object has no attribute 'update_preview'
+Traceback (most recent call last):
+  File "D:\Codes\Projects\TilemapRecolor\tileset_recolor_gui.py", line 37, in change_color
+    self.parent().update_preview()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'QWidget' object has no attribute 'update_preview'
+2025-05-08 07:22:35,972 - INFO - Starting application
+2025-05-08 07:22:35,988 - INFO - Initializing UI
+2025-05-08 07:22:35,993 - INFO - UI initialization completed
+2025-05-08 07:22:36,630 - INFO - Application started successfully
+2025-05-08 07:22:38,773 - INFO - Opening file dialog for tileset
+2025-05-08 07:22:41,096 - INFO - Loading tileset from: D:/Codes/Projects/TilemapRecolor/TileMap.png
+2025-05-08 07:22:41,132 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-08 07:22:41,132 - DEBUG - STREAM b'gAMA' 41 4
+2025-05-08 07:22:41,133 - DEBUG - STREAM b'IDAT' 57 8192
+2025-05-08 07:22:41,137 - INFO - Extracting palette from tileset
+2025-05-08 07:22:41,259 - INFO - Found 25 colors in palette
+2025-05-08 07:22:41,262 - INFO - Updating palette buttons
+2025-05-08 07:22:41,262 - INFO - Updating palette buttons
+2025-05-08 07:22:41,265 - INFO - Created 25 color buttons
+2025-05-08 07:22:41,265 - INFO - Updating previews
+2025-05-08 07:22:41,266 - INFO - Creating color mapping
+2025-05-08 07:22:41,266 - INFO - Recoloring tileset
+2025-05-08 07:22:41,390 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:22:42,682 - INFO - Opening save dialog for palette
+2025-05-08 07:22:48,772 - INFO - Saving palette to: D:/Codes/Projects/TilemapRecolor/first_palette.png
+2025-05-08 07:22:48,774 - INFO - Palette saved successfully
+2025-05-08 07:22:56,175 - INFO - Creating color mapping
+2025-05-08 07:22:56,176 - INFO - Recoloring tileset
+2025-05-08 07:22:56,319 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:23:01,338 - INFO - Creating color mapping
+2025-05-08 07:23:01,339 - INFO - Recoloring tileset
+2025-05-08 07:23:01,494 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:23:05,534 - INFO - Creating color mapping
+2025-05-08 07:23:05,535 - INFO - Recoloring tileset
+2025-05-08 07:23:05,671 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:23:10,893 - INFO - Creating color mapping
+2025-05-08 07:23:10,893 - INFO - Recoloring tileset
+2025-05-08 07:23:11,043 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:23:12,228 - INFO - Opening save dialog for tileset
+2025-05-08 07:23:17,315 - INFO - Saving tileset to: D:/Codes/Projects/TilemapRecolor/New TileSet.png
+2025-05-08 07:23:17,449 - INFO - Tileset saved successfully
+2025-05-08 07:24:13,399 - INFO - Starting application
+2025-05-08 07:24:13,419 - INFO - Initializing UI
+2025-05-08 07:24:13,423 - INFO - UI initialization completed
+2025-05-08 07:24:14,260 - INFO - Application started successfully
+2025-05-08 07:24:16,490 - INFO - Opening file dialog for tileset
+2025-05-08 07:24:19,270 - INFO - Loading tileset from: D:/Codes/Projects/TilemapRecolor/TileMap.png
+2025-05-08 07:24:19,313 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-08 07:24:19,313 - DEBUG - STREAM b'gAMA' 41 4
+2025-05-08 07:24:19,313 - DEBUG - STREAM b'IDAT' 57 8192
+2025-05-08 07:24:19,317 - INFO - Extracting palette from tileset
+2025-05-08 07:24:19,442 - INFO - Found 25 colors in palette
+2025-05-08 07:24:19,444 - INFO - Updating palette buttons
+2025-05-08 07:24:19,444 - INFO - Updating palette buttons
+2025-05-08 07:24:19,448 - INFO - Created 25 color buttons
+2025-05-08 07:24:19,448 - INFO - Updating previews
+2025-05-08 07:24:19,448 - INFO - Creating color mapping
+2025-05-08 07:24:19,448 - INFO - Recoloring tileset
+2025-05-08 07:24:19,571 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:23,378 - INFO - Creating color mapping
+2025-05-08 07:24:23,378 - INFO - Recoloring tileset
+2025-05-08 07:24:23,528 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:29,413 - INFO - Creating color mapping
+2025-05-08 07:24:29,413 - INFO - Recoloring tileset
+2025-05-08 07:24:29,552 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:33,683 - INFO - Creating color mapping
+2025-05-08 07:24:33,684 - INFO - Recoloring tileset
+2025-05-08 07:24:33,815 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:37,929 - INFO - Creating color mapping
+2025-05-08 07:24:37,929 - INFO - Recoloring tileset
+2025-05-08 07:24:38,058 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:41,549 - INFO - Creating color mapping
+2025-05-08 07:24:41,549 - INFO - Recoloring tileset
+2025-05-08 07:24:41,690 - INFO - Converting recolored tileset to pixmap
+2025-05-08 07:24:46,433 - INFO - Opening save dialog for tileset
+2025-05-08 07:24:50,548 - INFO - Saving tileset to: D:/Codes/Projects/TilemapRecolor/a.png
+2025-05-08 07:24:50,687 - INFO - Tileset saved successfully
+2025-05-08 07:24:52,790 - INFO - Opening save dialog for palette
+2025-05-08 07:24:57,646 - INFO - Saving palette to: D:/Codes/Projects/TilemapRecolor/ab.png
+2025-05-08 07:24:57,647 - INFO - Palette saved successfully
