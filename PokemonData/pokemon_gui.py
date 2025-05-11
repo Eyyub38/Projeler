@@ -5,13 +5,16 @@ import json
 import math
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                             QHBoxLayout, QComboBox, QTextEdit, QLabel, QTableWidget, QTableWidgetItem,
-                            QSplitter, QProgressBar, QMessageBox, QSizePolicy, QGridLayout, QGroupBox, QFrame, QCheckBox, QScrollArea, QLineEdit, QListWidget, QPushButton)
+                            QSplitter, QProgressBar, QMessageBox, QSizePolicy, QGridLayout, QGroupBox, QFrame, QCheckBox, QScrollArea, QLineEdit, QListWidget, QPushButton, QMenuBar, QMenu, QAction, QInputDialog)
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QPoint, QSize, QPointF
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QPainter, QPen, QColor, QFont, QPainterPath, QPolygonF
 import numpy as np
 from fetcher import PersistentCache, PokemonDataFetcher
+from threads import DataFetcherThread
+from widgets import PokemonCardWidget, StatsWidget, EvolutionChainWidget
 
 CACHE_FILE = 'pokemon_cache.json'
+FAV_FILE = 'favorites.json'
 
 class DataFetcherThread(QThread):
     finished = pyqtSignal(list)
@@ -79,6 +82,9 @@ class EvolutionChainWidget(QWidget):
         super().keyPressEvent(event)
 
     def prepare_nodes(self):
+        if not self.evo_chain or 'chain' not in self.evo_chain:
+            self.pokemon_nodes = []
+            return
         # Her zaman zincirin kökünü bul (ör: Eevee)
         root_chain = self.evo_chain['chain']
         root_name = root_chain['species']['name']
@@ -205,6 +211,8 @@ class EvolutionChainWidget(QWidget):
         return 'Lycanroc'
 
     def paintEvent(self, event):
+        if not hasattr(self, 'pokemon_nodes') or not self.pokemon_nodes:
+            return
         try:
             painter = QPainter(self)
             painter.setRenderHint(QPainter.Antialiasing)
@@ -459,942 +467,585 @@ class StatsWidget(QWidget):
                 self.stat_labels[name].setText(str(value))
         self.total_label.setText(f'Toplam: {total}')
 
-class PokemonCardWidget(QWidget):
-    def __init__(self, name, image_data, types, parent=None):
-        super().__init__(parent)
-        self.setFixedSize(140, 180)
-        self.setStyleSheet("background: #f8fafc; border-radius: 10px; border: 1px solid #b0b8c1;")
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(6)
-
-        # Pokemon image
-        img_label = QLabel()
-        pixmap = QPixmap()
-        pixmap.loadFromData(image_data)
-        img_label.setPixmap(pixmap.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        img_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(img_label)
-
-        # Name
-        name_label = QLabel(name.capitalize())
-        name_label.setAlignment(Qt.AlignCenter)
-        name_label.setStyleSheet("font-weight: bold; font-size: 15px; color: #2d5aa6;")
-        layout.addWidget(name_label)
-
-        # Types
-        type_layout = QHBoxLayout()
-        for t in types:
-            type_label = QLabel(t.capitalize())
-            type_label.setAlignment(Qt.AlignCenter)
-            type_label.setStyleSheet(f"""
-                background: {self.type_color(t)};
-                color: white;
-                border-radius: 6px;
-                padding: 2px 8px;
-                font-size: 12px;
-                font-weight: bold;
-            """)
-            type_layout.addWidget(type_label)
-        layout.addLayout(type_layout)
-
-    def type_color(self, t):
-        colors = {
-            'grass': '#78C850', 'poison': '#A040A0', 'fire': '#F08030', 'water': '#6890F0',
-            'bug': '#A8B820', 'normal': '#A8A878', 'flying': '#A890F0', 'electric': '#F8D030',
-            'ground': '#E0C068', 'fairy': '#EE99AC', 'fighting': '#C03028', 'psychic': '#F85888',
-            'rock': '#B8A038', 'steel': '#B8B8D0', 'ice': '#98D8D8', 'ghost': '#705898',
-            'dragon': '#7038F8', 'dark': '#705848'
-        }
-        return colors.get(t, '#888888')
-
 class PokemonGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.cache = PersistentCache(CACHE_FILE)
         self.fetcher = PokemonDataFetcher(cache=self.cache)
-        self.initUI()
-    def initUI(self):
-        self.setWindowTitle('Pokemon Veri Görüntüleyici')
-        self.setGeometry(100, 100, 1400, 900)
-        # Set window icon
-        if os.path.exists('pokeball.ico'):
-            self.setWindowIcon(QIcon('pokeball.ico'))
-        # Set modern stylesheet
-        self.setStyleSheet('''
-            QMainWindow { background: #f6f8fc; }
-            QGroupBox { background: #f0f4fa; border: 1px solid #b0b8c1; border-radius: 6px; margin-top: 8px; }
-            QGroupBox::title { color: #2d5aa6; font-weight: bold; subcontrol-origin: margin; left: 10px; top: 2px; }
-            QLabel, QCheckBox { font-size: 13px; }
-            QTableWidget { background: #ffffff; border: 1px solid #b0b8c1; }
-            QComboBox, QLineEdit, QTextEdit { background: #f8fafc; border: 1px solid #b0b8c1; border-radius: 4px; }
-            QPushButton { background: #e53e3e; color: white; border-radius: 4px; padding: 4px 12px; font-weight: bold; }
-            QPushButton:hover { background: #c53030; }
-            QProgressBar { border: 1px solid #b0b8c1; border-radius: 4px; text-align: center; }
-            QLineEdit#searchBox { 
-                padding: 8px;
-                font-size: 14px;
-                background: #ffffff;
-                border: 2px solid #e53e3e;
-                border-radius: 6px;
-            }
-            QLineEdit#searchBox:focus {
-                border: 2px solid #c53030;
-            }
-        ''')
-        main_widget = QWidget()
-        self.setCentralWidget(main_widget)
-        main_layout = QHBoxLayout(main_widget)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        self.favorites = self.load_favorites()
+        self.setup_ui()
+        self.setup_menu()
+        self.load_data()
+        
+    def setup_ui(self):
+        self.setWindowTitle("Pokemon Veri Görüntüleyici")
+        self.setMinimumSize(1000, 700)
 
-        # Sol panel: kategori, arama ve liste
-        left_panel = QWidget()
-        left_layout = QVBoxLayout(left_panel)
-        left_layout.setContentsMargins(10, 10, 10, 10)
-        left_layout.setSpacing(10)
+        # Önce detay panelini oluştur
+        self.pokemon_detail_widget = QWidget()
+        detail_layout = QVBoxLayout()
+        self.pokemon_detail_widget.setLayout(detail_layout)
 
-        # Arama kutusu
-        search_layout = QHBoxLayout()
-        self.search_box = QLineEdit()
-        self.search_box.setObjectName("searchBox")
-        self.search_box.setPlaceholderText("Ara... (İsim veya ID)")
-        self.search_box.textChanged.connect(self.on_search_text_changed)
-        search_layout.addWidget(self.search_box)
-        left_layout.addLayout(search_layout)
+        # --- Üst Bilgi Alanları ---
+        info_layout = QHBoxLayout()
+        detail_layout.addLayout(info_layout)
 
-        # Veri tipi seçici
-        self.data_type_combo = QComboBox()
-        self.data_type_combo.addItems(['Pokemon', 'Hareket', 'Yetenek', 'Eşya'])
-        self.data_type_combo.currentIndexChanged.connect(self.on_data_type_changed)
-        self.progress_bar = QProgressBar()
-        self.progress_bar.setVisible(False)
-        self.progress_bar.setFixedWidth(120)
-        left_layout.addWidget(QLabel('Veri Tipi:'))
-        left_layout.addWidget(self.data_type_combo)
-        left_layout.addWidget(self.progress_bar)
-        left_layout.addStretch(1)
+        # Kimlik Bilgileri
+        self.id_group = QGroupBox("Kimlik Bilgileri")
+        id_layout = QVBoxLayout()
+        self.id_label = QLabel()
+        id_layout.addWidget(self.id_label)
+        self.id_group.setLayout(id_layout)
+        info_layout.addWidget(self.id_group)
 
-        # Kart görünümü için scroll area ve grid
-        self.card_scroll = QScrollArea()
-        self.card_scroll.setWidgetResizable(True)
-        self.card_scroll.setStyleSheet("border: none;")
-        self.card_container = QWidget()
-        self.card_grid = QGridLayout(self.card_container)
-        self.card_grid.setSpacing(12)
-        self.card_grid.setContentsMargins(0, 0, 0, 0)
-        self.card_scroll.setWidget(self.card_container)
-        left_layout.addWidget(self.card_scroll, 10)
+        # Açıklama
+        self.desc_group = QGroupBox("Açıklama")
+        desc_layout = QVBoxLayout()
+        self.desc_label = QLabel()
+        self.desc_label.setWordWrap(True)
+        desc_layout.addWidget(self.desc_label)
+        self.desc_group.setLayout(desc_layout)
+        info_layout.addWidget(self.desc_group)
 
-        # Sağ panel: detaylar (scroll area içinde)
-        right_scroll = QScrollArea()
-        right_scroll.setWidgetResizable(True)
-        right_scroll.setStyleSheet("""
-            QScrollArea {
-                background: #f6f8fc;
-                border: none;
-            }
-            QScrollBar:vertical {
-                border: none;
-                background: #f0f4fa;
-                width: 12px;
-                margin: 0px;
-            }
-            QScrollBar::handle:vertical {
-                background: #b0b8c1;
-                min-height: 20px;
-                border-radius: 6px;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                height: 0px;
-            }
-            QScrollBar:horizontal {
-                border: none;
-                background: #f0f4fa;
-                height: 12px;
-                margin: 0px;
-            }
-            QScrollBar::handle:horizontal {
-                background: #b0b8c1;
-                min-width: 20px;
-                border-radius: 6px;
-            }
-            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
-                width: 0px;
-            }
-        """)
+        # Yumurta Grubu
+        self.egg_group = QGroupBox("Yumurta Grubu")
+        egg_layout = QVBoxLayout()
+        self.egg_label = QLabel()
+        egg_layout.addWidget(self.egg_label)
+        self.egg_group.setLayout(egg_layout)
+        info_layout.addWidget(self.egg_group)
 
-        right_panel = QWidget()
-        right_layout = QVBoxLayout(right_panel)
-        right_layout.setContentsMargins(10, 10, 10, 10)
-        right_layout.setSpacing(10)
+        # Yetenekler
+        self.ability_group = QGroupBox("Yetenekler")
+        ability_layout = QVBoxLayout()
+        self.ability_label = QLabel()
+        ability_layout.addWidget(self.ability_label)
+        self.ability_group.setLayout(ability_layout)
+        info_layout.addWidget(self.ability_group)
 
-        # Form seçici
-        self.form_selector = QComboBox()
-        self.form_selector.setVisible(False)
-        self.form_selector.currentIndexChanged.connect(self.on_form_selected)
-        right_layout.addWidget(self.form_selector)
+        # Pokemon resmi
+        self.image_label = QLabel()
+        self.image_label.setAlignment(Qt.AlignCenter)
+        self.image_label.setMinimumSize(200, 200)
+        detail_layout.addWidget(self.image_label)
 
-        # Üst grid: ID/size/type, description, image, stats
-        top_grid = QGridLayout()
-        top_grid.setSpacing(10)
-        self.info_box = QGroupBox("Kimlik Bilgileri")
-        info_layout = QVBoxLayout(self.info_box)
-        self.label_id = QLabel("ID: ")
-        self.label_size = QLabel("Boy: ")
-        self.label_weight = QLabel("Ağırlık: ")
-        self.label_type = QLabel("Tür: ")
-        self.label_catch_rate = QLabel("Yakalanma Oranı: ")
-        self.label_gender_ratio = QLabel("Cinsiyet Oranı: ")
-        self.label_leveling_rate = QLabel("Seviye Atlama Hızı: ")
-        info_layout.addWidget(self.label_id)
-        info_layout.addWidget(self.label_size)
-        info_layout.addWidget(self.label_weight)
-        info_layout.addWidget(self.label_type)
-        info_layout.addWidget(self.label_catch_rate)
-        info_layout.addWidget(self.label_gender_ratio)
-        info_layout.addWidget(self.label_leveling_rate)
-        self.desc_box = QGroupBox("Açıklama")
-        desc_layout = QVBoxLayout(self.desc_box)
-        self.label_desc = QTextEdit()
-        self.label_desc.setReadOnly(True)
-        self.label_desc.setStyleSheet("""
-            QTextEdit {
-                background: #ffffff;
-                border: 1px solid #b0b8c1;
-                border-radius: 4px;
-                padding: 4px;
-            }
-        """)
-        desc_layout.addWidget(self.label_desc)
-        self.image_box = QGroupBox("Resim")
-        image_layout = QVBoxLayout(self.image_box)
-        self.pokemon_image = QLabel()
-        self.pokemon_image.setAlignment(Qt.AlignCenter)
-        self.pokemon_image.setMinimumHeight(120)
-        image_layout.addWidget(self.pokemon_image)
-        self.stats_box = QGroupBox("Temel İstatistikler")
-        stats_layout = QVBoxLayout(self.stats_box)
+        # Pokemon adı
+        self.name_label = QLabel()
+        self.name_label.setAlignment(Qt.AlignCenter)
+        self.name_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        detail_layout.addWidget(self.name_label)
+
+        # Pokemon türleri
+        self.types_label = QLabel()
+        self.types_label.setAlignment(Qt.AlignCenter)
+        detail_layout.addWidget(self.types_label)
+
+        # İstatistikler
         self.stats_widget = StatsWidget()
-        stats_layout.addWidget(self.stats_widget)
-        top_grid.addWidget(self.info_box, 0, 0)
-        top_grid.addWidget(self.desc_box, 0, 1)
-        top_grid.addWidget(self.image_box, 0, 2)
-        top_grid.addWidget(self.stats_box, 0, 3)
-        mid_grid = QGridLayout()
-        mid_grid.setSpacing(10)
-        self.egg_box = QGroupBox("Yumurta Grubu")
-        egg_layout = QVBoxLayout(self.egg_box)
-        self.egg_text = QLabel("")
-        egg_layout.addWidget(self.egg_text)
-        self.abilities_box = QGroupBox("Yetenekler")
-        abilities_layout = QVBoxLayout(self.abilities_box)
-        self.abilities_text = QLabel("")
-        self.abilities_text.setWordWrap(True)
-        abilities_layout.addWidget(self.abilities_text)
-        self.moves_box = QGroupBox("Öğrenebildiği Hamleler")
-        moves_layout = QVBoxLayout(self.moves_box)
-        self.moves_text = QTextEdit()
-        self.moves_text.setReadOnly(True)
-        moves_layout.addWidget(self.moves_text)
-        mid_grid.addWidget(self.egg_box, 0, 0)
-        mid_grid.addWidget(self.abilities_box, 0, 1)
-        mid_grid.addWidget(self.moves_box, 0, 2)
-        self.evo_box = QGroupBox("Evrim Zinciri")
-        evo_layout = QHBoxLayout(self.evo_box)
-        self.evo_text = QLabel("")
-        self.evo_text.setWordWrap(True)
-        evo_layout.addWidget(self.evo_text)
-        # Yeni: Evrim Şartları Listbox
-        self.evo_conditions_box = QGroupBox("Evrim Şartları")
-        evo_cond_layout = QVBoxLayout(self.evo_conditions_box)
-        self.evo_conditions_list = QListWidget()
-        evo_cond_layout.addWidget(self.evo_conditions_list)
+        detail_layout.addWidget(self.stats_widget)
+
+        # Evrim zinciri
+        self.evolution_widget = EvolutionChainWidget(evo_chain=None, current_name=None, fetcher=self.fetcher)
+        detail_layout.addWidget(self.evolution_widget)
+
+        # Hareketler
+        self.moves_label = QLabel("Hareketler:")
+        self.moves_label.setStyleSheet("font-weight: bold;")
+        detail_layout.addWidget(self.moves_label)
+
+        self.moves_scroll = QScrollArea()
+        self.moves_scroll.setWidgetResizable(True)
+        self.moves_scroll.setMinimumHeight(200)
+        self.moves_widget = QWidget()
+        self.moves_layout = QVBoxLayout()
+        self.moves_widget.setLayout(self.moves_layout)
+        self.moves_scroll.setWidget(self.moves_widget)
+        detail_layout.addWidget(self.moves_scroll)
+
+        # Evrim Şartları
+        self.evo_conditions_group = QGroupBox("Evrim Şartları")
+        evo_conditions_layout = QVBoxLayout()
+        self.evo_conditions_label = QTextEdit()
+        self.evo_conditions_label.setReadOnly(True)
+        evo_conditions_layout.addWidget(self.evo_conditions_label)
+        self.evo_conditions_group.setLayout(evo_conditions_layout)
+        detail_layout.addWidget(self.evo_conditions_group)
+
         # Tip Avantajları/Zayıflıkları
-        self.type_box = QGroupBox("Tip Avantajları/Zayıflıkları")
-        type_layout = QVBoxLayout(self.type_box)
-        self.type_effect_text = QLabel("")
-        self.type_effect_text.setWordWrap(True)
-        type_layout.addWidget(self.type_effect_text)
+        self.type_adv_group = QGroupBox("Tip Avantajları/Zayıflıkları")
+        type_adv_layout = QVBoxLayout()
+        self.type_weak_label = QLabel()
+        self.type_strong_label = QLabel()
+        self.type_immune_label = QLabel()
+        type_adv_layout.addWidget(QLabel("<b>Zayıf Olduğu Tipler:</b>"))
+        type_adv_layout.addWidget(self.type_weak_label)
+        type_adv_layout.addWidget(QLabel("<b>Güçlü Olduğu Tipler:</b>"))
+        type_adv_layout.addWidget(self.type_strong_label)
+        type_adv_layout.addWidget(QLabel("<b>Bağışık Olduğu Tipler:</b>"))
+        type_adv_layout.addWidget(self.type_immune_label)
+        self.type_adv_group.setLayout(type_adv_layout)
+        detail_layout.addWidget(self.type_adv_group)
+
         # Sprite Galerisi
-        self.sprite_box = QGroupBox("Sprite Galerisi")
-        sprite_layout = QHBoxLayout(self.sprite_box)
-        self.sprite_labels = []
-        for i in range(4):
-            lbl = QLabel()
-            lbl.setAlignment(Qt.AlignCenter)
-            lbl.setMinimumSize(60, 60)
-            self.sprite_labels.append(lbl)
-            sprite_layout.addWidget(lbl)
+        self.sprite_group = QGroupBox("Sprite Galerisi")
+        sprite_layout = QGridLayout()
+        self.sprite_labels = {}
+        sprite_types = [
+            ("Normal Dişi", "front_default"),
+            ("Normal Erkek", "front_female"),
+            ("Shiny Dişi", "front_shiny"),
+            ("Shiny Erkek", "front_shiny_female")
+        ]
+        for i, (label, key) in enumerate(sprite_types):
+            sprite_layout.addWidget(QLabel(label), 0, i)
+            img_label = QLabel()
+            img_label.setAlignment(Qt.AlignCenter)
+            sprite_layout.addWidget(img_label, 1, i)
+            self.sprite_labels[key] = img_label
+        self.sprite_group.setLayout(sprite_layout)
+        detail_layout.addWidget(self.sprite_group)
+
         # Oyun/Bölge Bilgisi
-        self.region_box = QGroupBox("Oyun/Bölge Bilgisi")
-        region_layout = QVBoxLayout(self.region_box)
-        self.region_text = QLabel("")
-        self.region_text.setWordWrap(True)
-        region_layout.addWidget(self.region_text)
-        # Favoriler/Notlar
-        self.fav_box = QGroupBox("Favoriler / Notlar")
-        fav_layout = QVBoxLayout(self.fav_box)
+        self.game_info_group = QGroupBox("Oyun/Bölge Bilgisi")
+        game_info_layout = QVBoxLayout()
+        self.game_info_label = QLabel()
+        self.game_info_label.setWordWrap(True)
+        game_info_layout.addWidget(self.game_info_label)
+        self.game_info_group.setLayout(game_info_layout)
+        detail_layout.addWidget(self.game_info_group)
+
+        # Favoriler / Notlar
+        self.fav_group = QGroupBox("Favoriler / Notlar")
+        fav_layout = QVBoxLayout()
         self.fav_checkbox = QCheckBox("Favorilere ekle")
         self.fav_checkbox.stateChanged.connect(self.on_fav_changed)
-        self.note_text = QTextEdit()
-        self.note_text.setPlaceholderText("Kendi notunuzu buraya yazabilirsiniz...")
-        self.note_text.textChanged.connect(self.on_note_changed)
         fav_layout.addWidget(self.fav_checkbox)
-        fav_layout.addWidget(self.note_text)
+        self.note_edit = QTextEdit()
+        self.note_edit.setPlaceholderText("Kendi notunuzu buraya yazabilirsiniz...")
+        self.note_edit.textChanged.connect(self.on_note_changed)
+        fav_layout.addWidget(self.note_edit)
+        self.fav_group.setLayout(fav_layout)
+        detail_layout.addWidget(self.fav_group)
+
         # Topluluk Linkleri
-        self.links_box = QGroupBox("Topluluk Linkleri")
-        links_layout = QVBoxLayout(self.links_box)
-        self.links_label = QLabel("")
-        self.links_label.setOpenExternalLinks(True)
-        links_layout.addWidget(self.links_label)
+        self.links_group = QGroupBox("Topluluk Linkleri")
+        links_layout = QHBoxLayout()
+        self.bulba_link = QLabel()
+        self.serebii_link = QLabel()
+        self.smogon_link = QLabel()
+        for lbl in [self.bulba_link, self.serebii_link, self.smogon_link]:
+            lbl.setOpenExternalLinks(True)
+            links_layout.addWidget(lbl)
+        self.links_group.setLayout(links_layout)
+        detail_layout.addWidget(self.links_group)
+
         # Bu Hareketi Öğrenebilen Pokémonlar
-        self.move_learners_box = QGroupBox("Bu Hareketi Öğrenebilen Pokémonlar")
-        move_learners_layout = QVBoxLayout(self.move_learners_box)
-        self.move_learners_text = QTextEdit()
-        self.move_learners_text.setReadOnly(True)
-        move_learners_layout.addWidget(self.move_learners_text)
-        # Sağ paneli birleştir
-        right_layout.addLayout(top_grid)
-        right_layout.addLayout(mid_grid)
-        right_layout.addWidget(self.evo_box)
-        right_layout.addWidget(self.evo_conditions_box)
-        right_layout.addWidget(self.type_box)
-        right_layout.addWidget(self.sprite_box)
-        right_layout.addWidget(self.region_box)
-        right_layout.addWidget(self.fav_box)
-        right_layout.addWidget(self.links_box)
-        right_layout.addWidget(self.move_learners_box)
-        right_layout.addStretch(1)
+        self.move_learners_group = QGroupBox("Bu Hareketi Öğrenebilen Pokémonlar")
+        move_learners_layout = QVBoxLayout()
+        self.move_learners_label = QLabel()
+        self.move_learners_label.setWordWrap(True)
+        move_learners_layout.addWidget(self.move_learners_label)
+        self.move_learners_group.setLayout(move_learners_layout)
+        detail_layout.addWidget(self.move_learners_group)
 
-        # Scroll area'ya sağ paneli ekle
-        right_scroll.setWidget(right_panel)
+        # Sonra splitter ve panelleri oluştur
+        splitter = QSplitter()
+        self.setCentralWidget(splitter)
 
-        # Ana layout'a panelleri ekle
-        main_layout.addWidget(left_panel, 2)
-        main_layout.addWidget(right_scroll, 5)  # right_panel yerine right_scroll kullanıyoruz
-        self.on_data_type_changed(0)
-        # Favoriler ve notlar için depolama
-        self.favorites = {}
-        self.notes = {}
-    def on_data_type_changed(self, index):
-        self.current_data_type = self.data_type_combo.currentText().lower()
-        self.pokemon_image.clear()
-        self.label_id.setText("ID: ")
-        self.label_size.setText("Boy: ")
-        self.label_weight.setText("Ağırlık: ")
-        self.label_type.setText("Tür: ")
-        self.label_catch_rate.setText("Yakalanma Oranı: ")
-        self.label_gender_ratio.setText("Cinsiyet Oranı: ")
-        self.label_leveling_rate.setText("Seviye Atlama Hızı: ")
-        self.label_desc.setText("")
-        self.stats_widget.update_stats([])
-        self.egg_text.setText("")
-        self.abilities_text.setText("")
-        self.moves_text.clear()
-        self.evo_text.setText("")
-        self.type_effect_text.setText("")
-        self.load_items()
-    def load_items(self):
-        self.progress_bar.setVisible(True)
-        self.progress_bar.setValue(0)
-        self.fetcher_thread = DataFetcherThread(self.fetcher, self.current_data_type)
-        self.fetcher_thread.finished.connect(self.on_items_loaded)
-        self.fetcher_thread.error.connect(self.on_error)
-        self.fetcher_thread.start()
-    def on_items_loaded(self, items):
-        if self.current_data_type == 'pokemon':
-            # Debug için yazdırma
-            print("Toplam Pokemon sayısı:", len(items))
-            print("Lycanroc formları:")
-            for item in items:
-                if 'lycanroc' in item['name']:
-                    print(f"- {item['name']}")
-            
-            # Lycanroc formlarını özel olarak işle
-            processed_items = []
-            lycanroc_forms = []
-            
-            for item in items:
-                name = item['name']
-                if name.startswith('lycanroc-'):
-                    print(f"Lycanroc formu bulundu: {name}")
-                    lycanroc_forms.append(item)
-                else:
-                    processed_items.append(item)
-            
-            # Eğer lycanroc formları varsa, ana lycanroc'u ekle ve formları onun altına yerleştir
-            if lycanroc_forms:
-                print(f"Bulunan Lycanroc form sayısı: {len(lycanroc_forms)}")
-                # Ana lycanroc'u bul veya oluştur
-                main_lycanroc = next((item for item in items if item['name'] == 'lycanroc'), None)
-                if not main_lycanroc:
-                    print("Ana Lycanroc manuel olarak oluşturuluyor...")
-                    # İlk formun URL'sini kullanarak ana Lycanroc'u oluştur
-                    first_form = lycanroc_forms[0]
-                    main_lycanroc = {
-                        'name': 'lycanroc',
-                        'url': first_form['url'].replace('lycanroc-midday', 'lycanroc')  # URL'yi düzelt
-                    }
-                
-                print("Ana Lycanroc listeye eklendi")
-                processed_items.append(main_lycanroc)
-                # Formları ana lycanroc'un altına ekle
-                for form in lycanroc_forms:
-                    form['parent'] = 'lycanroc'  # Parent bilgisini ekle
-                    processed_items.append(form)
-                    print(f"Form eklendi: {form['name']}")
-            
-            print(f"İşlenmiş toplam Pokemon sayısı: {len(processed_items)}")
-            self.update_list_table(processed_items)
-        else:
-            self.update_list_table(items)
-        self.progress_bar.setVisible(False)
+        # Sol panel: Arama ve liste
+        left_widget = QWidget()
+        left_layout = QVBoxLayout()
+        left_widget.setLayout(left_layout)
+        splitter.addWidget(left_widget)
+
+        self.left_search = QLineEdit()
+        self.left_search.setPlaceholderText("Ara... (İsim veya ID)")
+        self.left_search.textChanged.connect(self.filter_pokemon_list)
+        left_layout.addWidget(self.left_search)
+
+        self.pokemon_table = QTableWidget()
+        self.pokemon_table.setColumnCount(2)
+        self.pokemon_table.setHorizontalHeaderLabels(["İsim", "URL"])
+        self.pokemon_table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.pokemon_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.pokemon_table.setSelectionMode(QTableWidget.SingleSelection)
+        self.pokemon_table.cellClicked.connect(self.on_pokemon_selected)
+        self.pokemon_table.setMinimumWidth(120)
+        left_layout.addWidget(self.pokemon_table)
+
+        # Sağ panel: Detaylar
+        right_widget = self.pokemon_detail_widget
+        splitter.addWidget(right_widget)
+        splitter.setSizes([150, 850])
+        
+        # Durum çubuğu
+        self.statusBar().showMessage("Hazır")
+        
+    def setup_menu(self):
+        menubar = self.menuBar()
+        
+        # Dosya menüsü
+        file_menu = menubar.addMenu('Dosya')
+        
+        clear_cache_action = QAction('Önbelleği Temizle', self)
+        clear_cache_action.triggered.connect(self.clear_cache)
+        file_menu.addAction(clear_cache_action)
+        
+        cache_size_action = QAction('Önbellek Boyutu', self)
+        cache_size_action.triggered.connect(self.show_cache_size)
+        file_menu.addAction(cache_size_action)
+        
+        file_menu.addSeparator()
+        
+        exit_action = QAction('Çıkış', self)
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
+        
+        # Yardım menüsü
+        help_menu = menubar.addMenu('Yardım')
+        
+        about_action = QAction('Hakkında', self)
+        about_action.triggered.connect(self.show_about)
+        help_menu.addAction(about_action)
+        
+    def load_data(self):
+        self.statusBar().showMessage("Veriler yükleniyor...")
+        self.thread = DataFetcherThread(self.fetcher, 'pokemon')
+        self.thread.finished.connect(self.on_data_loaded)
+        self.thread.error.connect(self.on_error)
+        self.thread.start()
+        
+    def on_data_loaded(self, data):
+        self.pokemon_list = data
+        self.filter_pokemon_list()
+        self.statusBar().showMessage("Veriler yüklendi")
+        
     def on_error(self, error_msg):
-        QMessageBox.critical(self, "Hata", f"Veri yüklenirken bir hata oluştu: {error_msg}")
-        self.progress_bar.setVisible(False)
-    def update_list_table(self, items):
-        # Sadece Pokemon için kart görünümü uygula
-        if self.current_data_type == 'pokemon':
-            # Kartları temizle
-            for i in reversed(range(self.card_grid.count())):
-                widget = self.card_grid.itemAt(i).widget()
-                if widget:
-                    widget.setParent(None)
-            # Kartları ekle
-            row, col = 0, 0
-            for idx, item in enumerate(items):
-                name = item['name']
-                try:
-                    data = self.fetcher.get_pokemon_data_safe(name)
-                    types = [t['type']['name'] for t in data['types']]
-                    img_data = self.fetcher.get_pokemon_image(data['id'])
-                except Exception:
-                    types = []
-                    img_data = b''
-                card = PokemonCardWidget(name, img_data, types)
-                card.mousePressEvent = lambda e, n=name: self.on_card_clicked(n)
-                self.card_grid.addWidget(card, row, col)
-                col += 1
-                if col >= 3:
-                    col = 0
-                    row += 1
-        else:
-            # Diğer veri tipleri için eski tabloyu kullanmak isterseniz buraya ekleyebilirsiniz
-            pass
-    def on_card_clicked(self, name):
-        # Kart tıklanınca detayları göster
-        if self.current_data_type == 'pokemon':
-            try:
-                species = self.fetcher.get_pokemon_species(name)
-                varieties = species.get('varieties', [])
-                self.form_data_list = []
-                self.form_selector.clear()
-                for var in varieties:
-                    form_name = var['pokemon']['name']
-                    data = self.fetcher.get_pokemon_data_safe(form_name)
-                    self.form_data_list.append((data, species))
-                    display_name = data['name'].capitalize()
-                    if '-' in form_name:
-                        region = form_name.split('-')[1].capitalize()
-                        display_name += f" ({region})"
-                    self.form_selector.addItem(display_name)
-                self.form_selector.setVisible(len(varieties) > 1)
-                self.display_pokemon_info(self.form_data_list[0][0], self.form_data_list[0][1], update_form_selector=False)
-            except Exception as e:
-                QMessageBox.warning(self, "Hata", f"{name} bulunamadı!")
-    def on_form_selected(self, idx):
-        # When user selects a form, update the details
-        if hasattr(self, 'form_data_list') and 0 <= idx < len(self.form_data_list):
-            data, species = self.form_data_list[idx]
-            self.display_pokemon_info(data, species, update_form_selector=False)
-    def display_pokemon_info(self, data, species, update_form_selector=True):
-        # Show all detail boxes
-        self.info_box.show()
-        self.desc_box.show()
-        self.image_box.show()
-        self.stats_box.show()
-        self.egg_box.show()
-        self.abilities_box.show()
-        self.moves_box.show()
-        self.evo_box.show()
-        self.type_box.show()
-        self.sprite_box.show()
-        self.region_box.show()
-        self.fav_box.show()
-        self.links_box.show()
-        self.move_learners_box.show()
-        if update_form_selector:
-            self.form_selector.setVisible(False)
-        # Kimlik bilgileri
-        self.label_id.setText(f"ID: {data['id']}")
-        self.label_size.setText(f"Boy: {data['height']/10}m")
-        self.label_weight.setText(f"Ağırlık: {data['weight']/10}kg")
-        types = [t['type']['name'] for t in data['types']]
-        types_str = ', '.join(t.capitalize() for t in types)
-        self.label_type.setText(f"Tür: {types_str}")
+        QMessageBox.critical(self, "Hata", f"Veri yüklenirken hata oluştu: {error_msg}")
+        self.statusBar().showMessage("Hata oluştu")
         
-        # Catch Rate ve Gender Ratio
-        catch_rate = species.get('capture_rate', 'N/A')
-        self.label_catch_rate.setText(f"Yakalanma Oranı: {catch_rate}")
-        
-        gender_rate = species.get('gender_rate', -1)
-        if gender_rate == -1:
-            gender_ratio = "Cinsiyetsiz"
-        else:
-            female_percent = (gender_rate / 8) * 100
-            male_percent = 100 - female_percent
-            gender_ratio = f"Erkek: %{male_percent:.1f}, Dişi: %{female_percent:.1f}"
-        self.label_gender_ratio.setText(f"Cinsiyet Oranı: {gender_ratio}")
-        
-        # Leveling Rate
-        growth_rate = species.get('growth_rate', {}).get('name', 'N/A')
-        growth_rate_map = {
-            'slow': 'Yavaş',
-            'medium': 'Normal',
-            'fast': 'Hızlı',
-            'medium-slow': 'Orta-Yavaş',
-            'slow-then-very-fast': 'Yavaş-Sonra Çok Hızlı',
-            'fast-then-very-slow': 'Hızlı-Sonra Çok Yavaş'
-        }
-        leveling_rate = growth_rate_map.get(growth_rate, growth_rate.capitalize())
-        self.label_leveling_rate.setText(f"Seviye Atlama Hızı: {leveling_rate}")
-        
-        # Açıklama
-        flavor = next((entry['flavor_text'] for entry in species['flavor_text_entries'] if entry['language']['name']=='en'), "")
-        self.label_desc.setText(flavor.replace('\n', ' ').replace('\f', ' '))
-        # Resim
-        image_data = self.fetcher.get_pokemon_image(data['id'])
-        image = QImage.fromData(image_data)
-        pixmap = QPixmap.fromImage(image)
-        self.pokemon_image.setPixmap(pixmap.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        # Sprite Galerisi
-        sprites = data.get('sprites', {})
-        sprite_urls = [
-            (sprites.get('front_default'), 'Normal Erkek'),
-            (sprites.get('front_shiny'), 'Shiny Erkek'),
-            (sprites.get('front_female'), 'Normal Dişi'),
-            (sprites.get('front_shiny_female'), 'Shiny Dişi'),
-        ]
-        for i, (url, label) in enumerate(sprite_urls):
-            if url:
-                img_data = requests.get(url).content
-                img = QImage.fromData(img_data)
-                pix = QPixmap.fromImage(img)
-                self.sprite_labels[i].setPixmap(pix.scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-                self.sprite_labels[i].setToolTip(label)
-            else:
-                self.sprite_labels[i].clear()
-                self.sprite_labels[i].setText(label)
-        # Temel istatistikler
-        self.stats_widget.update_stats(data['stats'])
-        # Yumurta grubu
-        eggs = ', '.join([e['name'].capitalize() for e in species['egg_groups']])
-        self.egg_text.setText(eggs)
-        # Yetenekler
-        abilities = ', '.join([a['ability']['name'].capitalize() for a in data['abilities']])
-        self.abilities_text.setText(abilities)
-        # Hamleler
-        moves_info = {}  # {move_name: {methods: set(), levels: set()}}
-        for move in data['moves']:
-            move_name = move['move']['name'].capitalize()
-            if move_name not in moves_info:
-                moves_info[move_name] = {'methods': set(), 'levels': set()}
-            
-            for vgd in move['version_group_details']:
-                method = vgd['move_learn_method']['name']
-                level = vgd['level_learned_at']
+    def search(self):
+        print("search fonksiyonu çağrıldı")
+        try:
+            search_text = self.left_search.text().strip().lower()
+            if not search_text:
+                print("Arama metni boş, çıkılıyor.")
+                return
+            # search_type artık yok, varsayılan olarak 'pokemon' araması yap
+            self.statusBar().showMessage("Aranıyor...")
+            pokemon_data = self.fetcher.get_pokemon_data_safe(search_text)
+            species_data = self.fetcher.get_pokemon_species(search_text)
+            evolution_chain = None
+            if species_data and species_data.get('evolution_chain'):
+                evolution_chain = self.fetcher.get_evolution_chain(
+                    species_data['evolution_chain']['url']
+                )
+            self.image_label.setPixmap(QPixmap.fromImage(QImage.fromData(self.fetcher.get_pokemon_image(pokemon_data['id']))))
+            self.name_label.setText(pokemon_data['name'].capitalize())
+            self.types_label.setText(', '.join([t['type']['name'].capitalize() for t in pokemon_data['types']]))
+            self.stats_widget.update_stats(pokemon_data['stats'])
+            self.evolution_widget.evo_chain = evolution_chain
+            self.evolution_widget.current_name = pokemon_data['name']
+            self.evolution_widget.prepare_nodes()
+            self.evolution_widget.update()
+            # Hareketler güncelle (gelişmiş görünüm)
+            while self.moves_layout.count():
+                item = self.moves_layout.takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
+            move_groups = {}
+            for move in pokemon_data['moves']:
+                for version in move['version_group_details']:
+                    method = version['move_learn_method']['name']
+                    if method not in move_groups:
+                        move_groups[method] = []
+                    move_groups[method].append({
+                        'name': move['move']['name'],
+                        'level': version.get('level_learned_at', 0)
+                    })
+            # Seviye ile öğrenilenler
+            if 'level-up' in move_groups:
+                html = '<b>Seviye ile Öğrenilen Hamleler</b><ul>'
+                # Seviyeye göre sırala
+                level_moves = sorted(move_groups['level-up'], key=lambda x: x['level'])
+                last_level = None
+                for m in level_moves:
+                    if m['level'] != last_level:
+                        if last_level is not None:
+                            html += '</ul>'
+                        html += f'<li><b>Seviye {m["level"]}:</b> <ul>'
+                        last_level = m['level']
+                    html += f'<li>{m["name"].capitalize()}</li>'
+                if last_level is not None:
+                    html += '</ul>'
+                html += '</ul>'
+                label = QLabel()
+                label.setTextFormat(Qt.RichText)
+                label.setText(html)
+                label.setWordWrap(True)
+                self.moves_layout.addWidget(label)
+            # Diğer yöntemler
+            for method, moves in move_groups.items():
                 if method == 'level-up':
-                    moves_info[move_name]['levels'].add(level)
-                else:
-                    moves_info[move_name]['methods'].add(method)
-
-        # Öğrenme yöntemlerinin Türkçe karşılıkları
-        method_names = {
-            'machine': 'TM/HM',
-            'tutor': 'Yetenek Öğreticisi',
-            'egg': 'Yumurta',
-            'stadium-surfing-pikachu': 'Stadyum Surfing Pikachu',
-            'light-ball-egg': 'Light Ball Yumurta',
-            'form-change': 'Form Değişimi',
-            'zygarde-cube': 'Zygarde Cube',
-            'special': 'Özel'
-        }
-
-        # Hamleleri grupla
-        level_moves = {}  # {level: [move_names]}
-        other_moves = {}  # {method: [move_names]}
-        
-        for move_name, info in moves_info.items():
-            # Seviye ile öğrenilen hamleleri ekle
-            for level in info['levels']:
-                if level not in level_moves:
-                    level_moves[level] = []
-                level_moves[level].append(move_name)
+                    continue
+                html = f'<b>{method.replace("-", " ").capitalize()} ile Öğrenilen Hamleler</b><ul>'
+                for m in sorted(moves, key=lambda x: x['name']):
+                    html += f'<li>{m["name"].capitalize()}</li>'
+                html += '</ul>'
+                label = QLabel()
+                label.setTextFormat(Qt.RichText)
+                label.setText(html)
+                label.setWordWrap(True)
+                self.moves_layout.addWidget(label)
+            self.moves_layout.addStretch()
+            self.statusBar().showMessage("Pokemon bulundu")
             
-            # Diğer yöntemlerle öğrenilen hamleleri ekle
-            for method in info['methods']:
-                if method not in other_moves:
-                    other_moves[method] = []
-                other_moves[method].append(move_name)
+            # Kimlik Bilgileri
+            gender_rate = species_data.get('gender_rate', -1)
+            if gender_rate == -1:
+                gender_text = 'Cinsiyetsiz'
+            else:
+                male = 100 - (gender_rate * 12.5)
+                female = gender_rate * 12.5
+                gender_text = f'Erkek: %{male:.1f}, Dişi: %{female:.1f}'
+            id_text = (
+                f"ID: {pokemon_data['id']}\n"
+                f"Boy: {pokemon_data['height'] / 10}m\n"
+                f"Ağırlık: {pokemon_data['weight'] / 10}kg\n"
+                f"Tür: {', '.join([t['type']['name'].capitalize() for t in pokemon_data['types']])}\n"
+                f"Yakalama Oranı: {species_data.get('capture_rate', 'Bilinmiyor')}\n"
+                f"Cinsiyet Oranı: {gender_text}\n"
+                f"Seviye Atlama Hızı: {species_data.get('growth_rate', {}).get('name', 'Bilinmiyor').replace('-', ' ').capitalize()}"
+            )
+            self.id_label.setText(id_text)
 
-        moves_html = "<h3>Seviye ile Öğrenilen Hamleler</h3>"
-        if level_moves:
-            moves_html += "<ul>"
-            for level in sorted(level_moves.keys()):
-                moves = sorted(level_moves[level])
-                moves_html += f"<li><b>Seviye {level}:</b> {', '.join(moves)}</li>"
-            moves_html += "</ul>"
-        else:
-            moves_html += "<p>Seviye ile öğrenilen hamle yok.</p>"
+            # Açıklama
+            flavor = next((f for f in species_data.get('flavor_text_entries', []) if f['language']['name'] == 'en'), None)
+            self.desc_label.setText(flavor['flavor_text'].replace('\n', ' ') if flavor else 'Açıklama yok.')
 
-        # Diğer öğrenme yöntemleri
-        for method, moves in other_moves.items():
-            if method in method_names:
-                moves_html += f"<h3>{method_names[method]} ile Öğrenilen Hamleler</h3>"
-                moves_html += "<ul>"
-                for move in sorted(moves):
-                    # Bu hamlenin tüm öğrenme yöntemlerini göster
-                    methods = []
-                    if moves_info[move]['levels']:
-                        levels = sorted(moves_info[move]['levels'])
-                        methods.append(f"Seviye {', '.join(map(str, levels))}")
-                    for m in sorted(moves_info[move]['methods']):
-                        if m in method_names:
-                            methods.append(method_names[m])
-                    moves_html += f"<li>{move} <i>({', '.join(methods)})</i></li>"
-                moves_html += "</ul>"
+            # Yumurta Grubu
+            egg_groups = [g['name'].capitalize() for g in species_data.get('egg_groups', [])]
+            self.egg_label.setText(', '.join(egg_groups) if egg_groups else 'Yok')
 
-        self.moves_text.setHtml(moves_html)
-        # Evrim zinciri
-        evo_chain_url = species['evolution_chain']['url']
-        evo_chain = self.fetcher.get_evolution_chain(evo_chain_url)
-        # Remove old widget if exists
-        for i in reversed(range(self.evo_box.layout().count())):
-            w = self.evo_box.layout().itemAt(i).widget()
-            if w:
-                w.setParent(None)
-        # Evrim ağacı widget'ı ve scroll area
-        evo_widget = EvolutionChainWidget(evo_chain, data['name'], self.fetcher)
-        evo_scroll = QScrollArea()
-        evo_scroll.setWidgetResizable(True)
-        evo_scroll.setWidget(evo_widget)
-        evo_scroll.setMinimumHeight(450)
-        evo_scroll.setStyleSheet("""
-            QScrollArea {
-                background: #f6f8fc;
-                border: none;
-            }
-            QScrollBar:vertical {
-                border: none;
-                background: #f0f4fa;
-                width: 12px;
-                margin: 0px;
-            }
-            QScrollBar::handle:vertical {
-                background: #b0b8c1;
-                min-height: 20px;
-                border-radius: 6px;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                height: 0px;
-            }
-            QScrollBar:horizontal {
-                border: none;
-                background: #f0f4fa;
-                height: 12px;
-                margin: 0px;
-            }
-            QScrollBar::handle:horizontal {
-                background: #b0b8c1;
-                min-width: 20px;
-                border-radius: 6px;
-            }
-            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
-                width: 0px;
-            }
-        """)
-        self.evo_box.setMinimumHeight(450)
-        self.evo_box.layout().addWidget(evo_scroll)
-        # Evrim şartlarını listbox'a ekle
-        self.populate_evo_conditions(evo_chain)
-        # Tip avantajları/zayıflıkları
-        self.type_effect_text.setText(self.get_type_effectiveness(types))
-        # Oyun/Bölge Bilgisi
-        self.region_text.setText(self.get_region_info(data, species))
-        # Topluluk Linkleri
-        self.links_label.setText(self.get_community_links(data['name']))
-        # Favoriler/Notlar
-        name = data['name']
-        self.fav_checkbox.blockSignals(True)
-        self.fav_checkbox.setChecked(self.favorites.get(name, False))
-        self.fav_checkbox.blockSignals(False)
-        self.note_text.blockSignals(True)
-        self.note_text.setText(self.notes.get(name, ""))
-        self.note_text.blockSignals(False)
-        # Bu Hareketi Öğrenebilen Pokémonlar
-        self.move_learners_text.setText(self.get_move_learners(data))
-    def populate_evo_conditions(self, evo_chain):
-        self.evo_conditions_list.clear()
-        def traverse(chain):
-            species = chain['species']['name']
-            for evo in chain.get('evolves_to', []):
-                evo_name = evo['species']['name']
-                for detail in evo.get('evolution_details', []):
-                    conds = self.evo_condition_text(detail)
-                    self.evo_conditions_list.addItem(f"{species.capitalize()} → {evo_name.capitalize()}: {conds}")
-                traverse(evo)
-        traverse(evo_chain['chain'])
-    def get_type_effectiveness(self, types):
-        # Type chart (simplified, can be expanded)
-        type_chart = {
-            'normal':     {'weak': ['fighting'], 'immune': ['ghost'], 'strong': []},
-            'fire':       {'weak': ['water', 'ground', 'rock'], 'strong': ['grass', 'ice', 'bug', 'steel'], 'immune': []},
-            'water':      {'weak': ['electric', 'grass'], 'strong': ['fire', 'ground', 'rock'], 'immune': []},
-            'electric':   {'weak': ['ground'], 'strong': ['water', 'flying'], 'immune': []},
-            'grass':      {'weak': ['fire', 'ice', 'poison', 'flying', 'bug'], 'strong': ['water', 'ground', 'rock'], 'immune': []},
-            'ice':        {'weak': ['fire', 'fighting', 'rock', 'steel'], 'strong': ['grass', 'ground', 'flying', 'dragon'], 'immune': []},
-            'fighting':   {'weak': ['flying', 'psychic', 'fairy'], 'strong': ['normal', 'ice', 'rock', 'dark', 'steel'], 'immune': []},
-            'poison':     {'weak': ['ground', 'psychic'], 'strong': ['grass', 'fairy'], 'immune': []},
-            'ground':     {'weak': ['water', 'grass', 'ice'], 'strong': ['fire', 'electric', 'poison', 'rock', 'steel'], 'immune': ['electric']},
-            'flying':     {'weak': ['electric', 'ice', 'rock'], 'strong': ['grass', 'fighting', 'bug'], 'immune': ['ground']},
-            'psychic':    {'weak': ['bug', 'ghost', 'dark'], 'strong': ['fighting', 'poison'], 'immune': []},
-            'bug':        {'weak': ['fire', 'flying', 'rock'], 'strong': ['grass', 'psychic', 'dark'], 'immune': []},
-            'rock':       {'weak': ['water', 'grass', 'fighting', 'ground', 'steel'], 'strong': ['fire', 'ice', 'flying', 'bug'], 'immune': []},
-            'ghost':      {'weak': ['ghost', 'dark'], 'strong': ['psychic', 'ghost'], 'immune': ['normal', 'fighting']},
-            'dragon':     {'weak': ['ice', 'dragon', 'fairy'], 'strong': ['dragon'], 'immune': []},
-            'dark':       {'weak': ['fighting', 'bug', 'fairy'], 'strong': ['psychic', 'ghost'], 'immune': ['psychic']},
-            'steel':      {'weak': ['fire', 'fighting', 'ground'], 'strong': ['ice', 'rock', 'fairy'], 'immune': ['poison']},
-            'fairy':      {'weak': ['poison', 'steel'], 'strong': ['fighting', 'dragon', 'dark'], 'immune': ['dragon']},
-        }
-        # Calculate weaknesses and strengths
-        weaknesses = set()
-        strengths = set()
-        immunities = set()
-        for t in types:
-            chart = type_chart.get(t, {})
-            weaknesses.update(chart.get('weak', []))
-            strengths.update(chart.get('strong', []))
-            immunities.update(chart.get('immune', []))
-        # Remove immunities from weaknesses
-        weaknesses = weaknesses - immunities
-        # Format
-        if not types:
-            return ''
-        return (
-            f"Zayıf Olduğu Tipler: {', '.join(w.capitalize() for w in weaknesses) if weaknesses else '-'}\n"
-            f"Güçlü Olduğu Tipler: {', '.join(s.capitalize() for s in strengths) if strengths else '-'}\n"
-            f"Bağışık Olduğu Tipler: {', '.join(i.capitalize() for i in immunities) if immunities else '-'}"
-        )
-    def get_region_info(self, data, species):
-        # Get games from game_indices
-        games = [g['version']['name'].replace('-', ' ').capitalize() for g in data.get('game_indices', [])]
-        games = sorted(set(games))
-        # Get generation/region from species
-        gen = species.get('generation', {}).get('name', '').replace('-', ' ').capitalize()
-        # Try to get region from pokedex_numbers
-        region = ''
-        pokedexes = species.get('pokedex_numbers', [])
-        if pokedexes:
-            region = ', '.join([p['pokedex']['name'].capitalize() for p in pokedexes])
-        info = ''
-        if games:
-            info += f"Göründüğü Oyunlar: {', '.join(games)}\n"
-        if gen:
-            info += f"Jenerasyon: {gen}\n"
-        if region:
-            info += f"Bölgeler: {region}"
-        return info if info else '-'
-    def display_move_info(self, data):
-        # Sadece gerekli kutuları göster
-        self.info_box.hide()
-        self.desc_box.hide()
-        self.image_box.hide()
-        self.egg_box.hide()
-        self.abilities_box.hide()
-        self.moves_box.hide()
-        self.evo_box.hide()
-        self.type_box.hide()
-        self.region_box.hide()
-        self.fav_box.hide()
-        self.sprite_box.hide()
-        self.stats_widget.update_stats([])
-        self.links_box.show()
-        self.move_learners_box.show()
-        self.pokemon_image.clear()
-
-        # Temel istatistikler (move info)
-        info = f"""
-        <h2>{data['name'].capitalize()}</h2>
-        <p><b>ID:</b> {data['id']}</p>
-        <p><b>Güç:</b> {data['power'] if data['power'] else 'N/A'}</p>
-        <p><b>PP:</b> {data['pp']}</p>
-        <p><b>Doğruluk:</b> {data['accuracy'] if data['accuracy'] else 'N/A'}</p>
-        <p><b>Tür:</b> {data['type']['name'].capitalize()}</p>
-        <p><b>Hasar Türü:</b> {data['damage_class']['name'].capitalize()}</p>
-        """
-        if data['effect_entries']:
-            effect = ""
-            for entry in data['effect_entries']:
-                if entry['language']['name'] == 'en':
-                    effect = entry['effect']
-                    break
-            if effect:
-                info += f"<h3>Açıklama</h3><p>{effect}</p>"
-        self.stats_widget.update_stats(data['stats'])
-        self.label_desc.setText("")
-        self.egg_text.setText("")
-        self.abilities_text.setText("")
-        self.moves_text.clear()
-        self.evo_text.setText("")
-        self.type_effect_text.setText("")
-        self.region_text.setText("")
-        self.fav_checkbox.setChecked(False)
-        self.note_text.setText("")
-        # Topluluk Linkleri
-        self.links_label.setText(self.get_community_links(data['name']))
-        # Bu Hareketi Öğrenebilen Pokémonlar
-        self.move_learners_text.setText(self.get_move_learners(data))
-
-    def on_search_text_changed(self, text):
-        # Arama metni değiştiğinde listeyi filtrele
-        text = text.lower()
-        for row in range(self.card_grid.count()):
-            widget = self.card_grid.itemAt(row).widget()
-            if widget:
-                name = widget.name.lower()
-                # İsim veya ID ile arama
-                if text in name or (text.isdigit() and text in widget.name):
-                    widget.setVisible(True)
+            # Yetenekler
+            abilities = [a['ability']['name'].capitalize() for a in pokemon_data.get('abilities', [])]
+            self.ability_label.setText(', '.join(abilities) if abilities else 'Yok')
+            
+            # Evrim Şartları metni
+            def parse_evo_chain(chain):
+                lines = []
+                def walk(chain):
+                    from_poke = chain['species']['name'].capitalize()
+                    for evo in chain.get('evolves_to', []):
+                        to_poke = evo['species']['name'].capitalize()
+                        details = evo.get('evolution_details', [{}])[0]
+                        conds = []
+                        if details.get('min_level'):
+                            conds.append(f"Seviye: {details['min_level']}")
+                        if details.get('item'):
+                            conds.append(f"Item: {details['item']['name'].capitalize()}")
+                        if details.get('trigger') and details['trigger']['name'] != 'level-up':
+                            conds.append(f"{details['trigger']['name'].capitalize()}")
+                        if details.get('time_of_day'):
+                            conds.append(f"Zaman: {details['time_of_day'].capitalize()}")
+                        if details.get('min_happiness'):
+                            conds.append(f"Mutluluk: {details['min_happiness']}")
+                        if details.get('min_beauty'):
+                            conds.append(f"Güzellik: {details['min_beauty']}")
+                        if details.get('min_affection'):
+                            conds.append(f"Bağlılık: {details['min_affection']}")
+                        if details.get('held_item'):
+                            conds.append(f"Tuttuğu eşya: {details['held_item']['name'].capitalize()}")
+                        if details.get('known_move'):
+                            conds.append(f"Bildiği hareket: {details['known_move']['name'].capitalize()}")
+                        if details.get('known_move_type'):
+                            conds.append(f"Bildiği tür: {details['known_move_type']['name'].capitalize()}")
+                        if details.get('location'):
+                            conds.append(f"Lokasyon: {details['location']['name'].capitalize()}")
+                        if details.get('gender') is not None:
+                            conds.append(f"Cinsiyet: {'Erkek' if details['gender']==1 else 'Dişi'}")
+                        cond_str = ', '.join(conds) if conds else 'Level-up'
+                        lines.append(f"{from_poke} → {to_poke}: {cond_str}")
+                        walk(evo)
+                walk(chain['chain'])
+                return lines
+            evo_lines = []
+            if evolution_chain:
+                evo_lines = parse_evo_chain(evolution_chain)
+            self.evo_conditions_label.setPlainText('\n'.join(evo_lines) if evo_lines else 'Veri yok.')
+            
+            # Tip Avantajları/Zayıflıkları
+            # Tüm tipleri çek
+            all_types = [t['type']['name'] for t in pokemon_data['types']]
+            type_chart = {}
+            # Tip etkilerini hesapla (çarpanlar)
+            # Tüm saldırı tipleri için çarpanları başlat
+            for t in [
+                'normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy']:
+                type_chart[t] = 1.0
+            for poke_type in all_types:
+                type_data = self.fetcher.get_type_data(poke_type)
+                for rel in type_data['damage_relations']['double_damage_from']:
+                    type_chart[rel['name']] *= 2
+                for rel in type_data['damage_relations']['half_damage_from']:
+                    type_chart[rel['name']] *= 0.5
+                for rel in type_data['damage_relations']['no_damage_from']:
+                    type_chart[rel['name']] *= 0
+            weak = [t.capitalize() for t, v in type_chart.items() if v > 1]
+            strong = [t.capitalize() for t, v in type_chart.items() if 0 < v < 1]
+            immune = [t.capitalize() for t, v in type_chart.items() if v == 0]
+            self.type_weak_label.setText(', '.join(weak) if weak else '-')
+            self.type_strong_label.setText(', '.join(strong) if strong else '-')
+            self.type_immune_label.setText(', '.join(immune) if immune else '-')
+            
+            # Sprite Galerisi
+            sprites = pokemon_data.get('sprites', {})
+            for key, label in self.sprite_labels.items():
+                url = sprites.get(key)
+                if url:
+                    try:
+                        img_data = requests.get(url).content
+                        pixmap = QPixmap()
+                        pixmap.loadFromData(img_data)
+                        label.setPixmap(pixmap.scaled(64, 64, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    except Exception:
+                        label.clear()
                 else:
-                    widget.setVisible(False)
+                    label.clear()
+            
+            # Oyun/Bölge Bilgisi
+            games = sorted(set([g['version']['name'].replace('-', ' ').capitalize() for g in pokemon_data.get('game_indices', [])]))
+            generation = species_data.get('generation', {}).get('name', '').replace('-', ' ').capitalize()
+            regions = [r['name'].replace('-', ' ').capitalize() for r in species_data.get('paldea_forms', [])] if 'paldea_forms' in species_data else []
+            game_text = (
+                f"Göründüğü Oyunlar: {', '.join(games) if games else '-'}\n"
+                f"Jenerasyon: {generation if generation else '-'}\n"
+                f"Bölgeler: {', '.join(regions) if regions else '-'}"
+            )
+            self.game_info_label.setText(game_text)
+            
+            # Favoriler / Notlar güncelle
+            self.current_pokemon_name = pokemon_data['name']
+            fav = self.favorites.get(self.current_pokemon_name, {})
+            self.fav_checkbox.blockSignals(True)
+            self.fav_checkbox.setChecked(self.current_pokemon_name in self.favorites)
+            self.fav_checkbox.blockSignals(False)
+            self.note_edit.blockSignals(True)
+            self.note_edit.setPlainText(fav.get('note', ''))
+            self.note_edit.blockSignals(False)
+            
+            # Topluluk Linkleri
+            poke_name = pokemon_data['name'].capitalize()
+            bulba_url = f'https://bulbapedia.bulbagarden.net/wiki/{poke_name}_(Pokémon)'
+            serebii_url = f'https://www.serebii.net/pokedex-swsh/{poke_name.lower()}/'
+            smogon_url = f'https://www.smogon.com/dex/ss/pokemon/{poke_name.lower()}/'
+            self.bulba_link.setText(f'<a href="{bulba_url}">Bulbapedia</a>')
+            self.serebii_link.setText(f'<a href="{serebii_url}">Serebii</a>')
+            self.smogon_link.setText(f'<a href="{smogon_url}">Smogon</a>')
+            
+            # Bu hareketi öğrenebilen Pokémonlar
+            learners = pokemon_data.get('learned_by_pokemon', [])
+            if learners:
+                names = ', '.join([p['name'].capitalize() for p in learners])
+                self.move_learners_label.setText(names)
+            else:
+                self.move_learners_label.setText('Veri yok.')
+            
+            print("search fonksiyonu bitti")
+        except Exception as e:
+            print(f"search fonksiyonunda hata: {e}")
+            QMessageBox.critical(self, "Hata", f"Beklenmeyen hata: {str(e)}")
 
-    def get_move_learners(self, move_data):
-        # Try to get Pokémon that can learn this move (from 'learned_by_pokemon')
-        learners = move_data.get('learned_by_pokemon', [])
-        if not learners:
-            return 'Veri yok.'
-        lines = []
-        for poke in learners:
-            name = poke['name'].capitalize()
-            lines.append(f"- {name}")
-        return '\n'.join(lines)
+    def clear_cache(self):
+        reply = QMessageBox.question(self, 'Önbelleği Temizle',
+                                   'Tüm önbellek verilerini temizlemek istediğinizden emin misiniz?',
+                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                                   
+        if reply == QMessageBox.Yes:
+            self.fetcher.clear_image_cache()
+            self.cache.data = {'pokemon': {}, 'move': {}, 'ability': {}, 'item': {}, 'images': {}}
+            self.cache.save()
+            QMessageBox.information(self, 'Bilgi', 'Önbellek temizlendi.')
+            
+    def show_cache_size(self):
+        image_cache_size = self.fetcher.get_image_cache_size()
+        data_cache_size = len(str(self.cache.data)) / (1024 * 1024)  # MB cinsinden
+        total_size = image_cache_size + data_cache_size
+        
+        QMessageBox.information(self, 'Önbellek Boyutu',
+                              f'Resim Önbelleği: {image_cache_size:.2f} MB\n'
+                              f'Veri Önbelleği: {data_cache_size:.2f} MB\n'
+                              f'Toplam: {total_size:.2f} MB')
+                              
+    def show_about(self):
+        QMessageBox.about(self, 'Pokemon Veri Görüntüleyici Hakkında',
+                         'Pokemon Veri Görüntüleyici v1.0\n\n'
+                         'Bu uygulama, Pokemon verilerini görüntülemek için tasarlanmıştır.\n'
+                         'PokeAPI kullanılarak geliştirilmiştir.\n\n'
+                         'Özellikler:\n'
+                         '- Pokemon, hareket, yetenek ve eşya bilgilerini görüntüleme\n'
+                         '- Evrim zincirlerini görselleştirme\n'
+                         '- İstatistikleri grafiksel olarak gösterme\n'
+                         '- Önbellekleme ile hızlı veri erişimi\n'
+                         '- Resim önbellekleme\n\n'
+                         '© 2024 Pokemon Veri Görüntüleyici')
 
-    def display_ability_info(self, data):
-        # Only show stats/info box
-        self.info_box.hide()
-        self.desc_box.hide()
-        self.image_box.hide()
-        self.egg_box.hide()
-        self.abilities_box.hide()
-        self.moves_box.hide()
-        self.evo_box.hide()
-        self.stats_widget.update_stats([])
-        self.type_box.hide()
-        self.sprite_box.hide()
-        self.region_box.hide()
-        self.fav_box.hide()
-        self.links_box.hide()
-        self.pokemon_image.clear()
-        # Get English effect
-        effect = ""
-        for entry in data['effect_entries']:
-            if entry['language']['name'] == 'en':
-                effect = entry['effect']
-                break
-        info = f"<h2>{data['name'].capitalize()}</h2><p><b>ID:</b> {data['id']}</p>"
-        if effect:
-            info += f"<h3>Açıklama</h3><p>{effect}</p>"
-        self.stats_widget.update_stats(data['stats'])
-        self.label_desc.setText("")
-        self.egg_text.setText("")
-        self.abilities_text.setText("")
-        self.moves_text.clear()
-        self.evo_text.setText("")
+    def load_favorites(self):
+        try:
+            with open(FAV_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {}
 
-    def display_item_info(self, data):
-        # Only show stats/info box
-        self.info_box.hide()
-        self.desc_box.hide()
-        self.image_box.hide()
-        self.egg_box.hide()
-        self.abilities_box.hide()
-        self.moves_box.hide()
-        self.evo_box.hide()
-        self.stats_widget.update_stats([])
-        self.pokemon_image.clear()
-        info = f"<h2>{data['name'].capitalize()}</h2><p><b>ID:</b> {data['id']}</p><p><b>Fiyat:</b> {data['cost']}</p>"
-        if data['effect_entries']:
-            info += f"<h3>Açıklama</h3><p>{data['effect_entries'][0]['effect']}</p>"
-        self.stats_widget.update_stats(data['stats'])
-        self.label_desc.setText("")
-        self.egg_text.setText("")
-        self.abilities_text.setText("")
-        self.moves_text.clear()
-        self.evo_text.setText("")
+    def save_favorites(self):
+        try:
+            with open(FAV_FILE, 'w', encoding='utf-8') as f:
+                json.dump(self.favorites, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
 
-    def on_fav_changed(self, state):
-        # Store favorite status for current Pokémon
-        if hasattr(self, 'form_data_list') and self.form_selector.currentIndex() >= 0:
-            data, _ = self.form_data_list[self.form_selector.currentIndex()]
-            self.favorites[data['name']] = bool(state)
+    def on_fav_changed(self):
+        name = getattr(self, 'current_pokemon_name', None)
+        if not name:
+            return
+        if self.fav_checkbox.isChecked():
+            if name not in self.favorites:
+                self.favorites[name] = {'note': self.note_edit.toPlainText()}
+        else:
+            if name in self.favorites:
+                del self.favorites[name]
+        self.save_favorites()
 
     def on_note_changed(self):
-        # Store note for current Pokémon
-        if hasattr(self, 'form_data_list') and self.form_selector.currentIndex() >= 0:
-            data, _ = self.form_data_list[self.form_selector.currentIndex()]
-            self.notes[data['name']] = self.note_text.toPlainText()
+        name = getattr(self, 'current_pokemon_name', None)
+        if not name:
+            return
+        if self.fav_checkbox.isChecked():
+            self.favorites[name] = {'note': self.note_edit.toPlainText()}
+            self.save_favorites()
 
-    def get_community_links(self, name):
-        name_cap = name.capitalize()
-        name_dash = name.replace(' ', '-').lower()
-        bulbapedia = f'https://bulbapedia.bulbagarden.net/wiki/{name_cap}_(Pokémon)'
-        serebii = f'https://www.serebii.net/pokedex-swsh/{name_dash}/'
-        smogon = f'https://www.smogon.com/dex/ss/pokemon/{name_dash}/'
-        return (
-            f'<a href="{bulbapedia}">Bulbapedia</a> | '
-            f'<a href="{serebii}">Serebii</a> | '
-            f'<a href="{smogon}">Smogon</a>'
-        )
+    def filter_pokemon_list(self):
+        text = self.left_search.text().strip().lower()
+        self.pokemon_table.setRowCount(0)
+        for p in getattr(self, 'pokemon_list', []):
+            name = p['name']
+            url = p['url']
+            if text in name.lower() or text in url.lower() or text in str(p.get('id', '')):
+                row = self.pokemon_table.rowCount()
+                self.pokemon_table.insertRow(row)
+                self.pokemon_table.setItem(row, 0, QTableWidgetItem(name.capitalize()))
+                self.pokemon_table.setItem(row, 1, QTableWidgetItem(url))
 
-    def evo_condition_text(self, details):
-        conds = []
-        if details.get('min_level'):
-            conds.append(f"Seviye: {details['min_level']}")
-        if details.get('item'):
-            conds.append(f"Eşya: {details['item']['name'].capitalize()}")
-        if details.get('trigger'):
-            conds.append(details['trigger']['name'].capitalize())
-        if details.get('location'):
-            conds.append(f"{details['location']['name'].capitalize()}")
-        if details.get('known_move_type'):
-            conds.append(f"{details['known_move_type']['name'].capitalize()} move")
-        if details.get('time_of_day') and details['time_of_day']:
-            conds.append(f"{details['time_of_day'].capitalize()}")
-        if details.get('min_happiness'):
-            conds.append("Happiness")
-        if details.get('min_beauty'):
-            conds.append("Beauty")
-        if details.get('min_affection'):
-            conds.append("Affection")
-        if details.get('relative_physical_stats'):
-            conds.append("Physical stats")
-        if details.get('gender') is not None:
-            conds.append(f"Gender: {details['gender']}")
-        if details.get('held_item'):
-            conds.append(f"Held: {details['held_item']['name'].capitalize()}")
-        if details.get('turn_upside_down'):
-            conds.append("Turn upside down")
-        return ', '.join(conds) if conds else "-"
-
-def main():
-    app = QApplication(sys.argv)
-    ex = PokemonGUI()
-    ex.show()
-    sys.exit(app.exec_())
+    def on_pokemon_selected(self, row, col):
+        name = self.pokemon_table.item(row, 0).text().strip().lower()
+        print(f"Seçilen: {name}")
+        self.search()
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    window = PokemonGUI()
+    window.show()
+    sys.exit(app.exec_())
 
 # Build talimatı (Windows için):
 # 1. pokeball.ico dosyasını proje klasörüne koyun.
