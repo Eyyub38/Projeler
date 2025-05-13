@@ -739,8 +739,8 @@ class PokemonGUI(QMainWindow):
 
         # Hareket tablosu
         self.moves_table = QTableWidget()
-        self.moves_table.setColumnCount(5)
-        self.moves_table.setHorizontalHeaderLabels(["İsim", "Tür", "Güç", "Doğruluk", "PP"])
+        self.moves_table.setColumnCount(6)  # Sütun sayısını 6'ya çıkardık
+        self.moves_table.setHorizontalHeaderLabels(["İsim", "Tür", "Güç", "Doğruluk", "PP", "Hasar Sınıfı"])
         self.moves_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.moves_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.moves_table.setSelectionMode(QTableWidget.SingleSelection)
@@ -845,6 +845,14 @@ class PokemonGUI(QMainWindow):
             self.moves_table.setItem(row, 2, QTableWidgetItem(str(move_data.get('power', '-'))))
             self.moves_table.setItem(row, 3, QTableWidgetItem(str(move_data.get('accuracy', '-'))))
             self.moves_table.setItem(row, 4, QTableWidgetItem(str(move_data.get('pp', '-'))))
+            # Hasar sınıfını Türkçe olarak ekle
+            damage_class = move_data.get('damage_class', {}).get('name', '-')
+            damage_class_tr = {
+                'physical': 'Fiziksel',
+                'special': 'Özel',
+                'status': 'Durum'
+            }.get(damage_class, damage_class.capitalize())
+            self.moves_table.setItem(row, 5, QTableWidgetItem(damage_class_tr))
 
             # Detaylı bilgi derle
             lines = []
