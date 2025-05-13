@@ -618,6 +618,7 @@ class PokemonGUI(QMainWindow):
 
         # Hareketler (scrollable)
         self.moves_group = QGroupBox("Hareketler")
+        self.moves_group.setMinimumHeight(300)  # Hareketler grubunun minimum yüksekliğini artırdık
         moves_group_layout = QVBoxLayout()
         self.moves_scroll = QScrollArea()
         self.moves_scroll.setWidgetResizable(True)
@@ -714,7 +715,7 @@ class PokemonGUI(QMainWindow):
         move_learners_layout = QVBoxLayout()
         self.move_learners_label = QLabel()
         self.move_learners_label.setWordWrap(True)
-        self.move_learners_label.setMinimumHeight(60)  # Yüksekliği artırıldı
+        self.move_learners_label.setMinimumHeight(60)
         move_learners_layout.addWidget(self.move_learners_label)
         self.move_learners_group.setLayout(move_learners_layout)
         detail_layout.addWidget(self.move_learners_group)
