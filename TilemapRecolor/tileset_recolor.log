@@ -170,3 +170,462 @@ AttributeError: 'QWidget' object has no attribute 'update_preview'
 2025-05-09 00:22:29,209 - INFO - Opening save dialog for tileset
 2025-05-09 00:22:32,319 - INFO - Saving tileset to: C:/Users/erenb/OneDrive/Masaüstü/a.png
 2025-05-09 00:22:32,586 - INFO - Tileset saved successfully
+2025-05-15 03:34:41,173 - INFO - Starting application
+2025-05-15 03:34:41,370 - INFO - Initializing UI
+2025-05-15 03:34:41,381 - INFO - UI initialization completed
+2025-05-15 03:34:42,570 - INFO - Application started successfully
+2025-05-15 03:35:01,256 - INFO - Starting application
+2025-05-15 03:35:01,284 - INFO - Initializing UI
+2025-05-15 03:35:01,294 - INFO - UI initialization completed
+2025-05-15 03:35:02,047 - INFO - Application started successfully
+2025-05-15 03:35:20,196 - INFO - Updating palette buttons
+2025-05-15 03:35:20,196 - INFO - Created 0 color buttons
+2025-05-15 03:35:20,197 - INFO - Updating palette buttons
+2025-05-15 03:35:20,197 - INFO - Created 0 color buttons
+2025-05-15 03:35:28,063 - INFO - Opening file dialog for tileset
+2025-05-15 03:35:33,850 - INFO - Loading tileset from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:35:34,163 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:35:34,164 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:35:34,164 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:35:34,171 - INFO - Extracting palette from tileset
+2025-05-15 03:35:34,944 - INFO - Found 72 colors in palette
+2025-05-15 03:35:34,948 - INFO - Updating palette buttons
+2025-05-15 03:35:34,948 - INFO - Updating palette buttons
+2025-05-15 03:35:34,959 - INFO - Created 72 color buttons
+2025-05-15 03:35:34,959 - INFO - Updating previews
+2025-05-15 03:35:34,963 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:35:48,180 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:37:48,666 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:37:57,958 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:38:12,803 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:38:16,330 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3299, in fromarray
+    mode, rawmode = _fromarray_typemap[typekey]
+                    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: ((1, 1), '|O')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 332, in update_preview
+    preview_image = Image.fromarray(np.array(qim))
+  File "C:\Users\erenb\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\PIL\Image.py", line 3303, in fromarray
+    raise TypeError(msg) from e
+TypeError: Cannot handle this data type: (1, 1), |O
+2025-05-15 03:39:46,753 - INFO - Starting application
+2025-05-15 03:39:46,785 - INFO - Initializing UI
+2025-05-15 03:39:46,795 - INFO - UI initialization completed
+2025-05-15 03:39:47,993 - INFO - Application started successfully
+2025-05-15 03:39:51,334 - INFO - Opening file dialog for tileset
+2025-05-15 03:39:55,575 - INFO - Loading tileset from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:39:55,679 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:39:55,679 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:39:55,680 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:39:55,687 - INFO - Extracting palette from tileset
+2025-05-15 03:39:56,452 - INFO - Found 72 colors in palette
+2025-05-15 03:39:56,454 - INFO - Updating palette buttons
+2025-05-15 03:39:56,454 - INFO - Updating palette buttons
+2025-05-15 03:39:56,462 - INFO - Created 72 color buttons
+2025-05-15 03:39:56,463 - INFO - Updating previews
+2025-05-15 03:40:12,398 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 333, in update_preview
+    buffer.setsize(qim.sizeInBytes())
+    ^^^^^^^^^^^^^^
+AttributeError: 'sip.array' object has no attribute 'setsize'
+2025-05-15 03:40:19,251 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 333, in update_preview
+    buffer.setsize(qim.sizeInBytes())
+    ^^^^^^^^^^^^^^
+AttributeError: 'sip.array' object has no attribute 'setsize'
+2025-05-15 03:40:29,102 - ERROR - Error updating preview
+Traceback (most recent call last):
+  File "D:\Projeler\TilemapRecolor\tileset_recolor_gui.py", line 333, in update_preview
+    buffer.setsize(qim.sizeInBytes())
+    ^^^^^^^^^^^^^^
+AttributeError: 'sip.array' object has no attribute 'setsize'
+2025-05-15 03:41:03,743 - INFO - Starting application
+2025-05-15 03:41:03,768 - INFO - Initializing UI
+2025-05-15 03:41:03,775 - INFO - UI initialization completed
+2025-05-15 03:41:04,365 - INFO - Application started successfully
+2025-05-15 03:41:12,235 - INFO - Opening file dialog for tileset
+2025-05-15 03:41:16,092 - INFO - Loading tileset from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:41:16,177 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:41:16,177 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:41:16,177 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:41:16,185 - INFO - Extracting palette from tileset
+2025-05-15 03:41:16,928 - INFO - Found 72 colors in palette
+2025-05-15 03:41:16,931 - INFO - Updating palette buttons
+2025-05-15 03:41:16,931 - INFO - Updating palette buttons
+2025-05-15 03:41:16,938 - INFO - Created 72 color buttons
+2025-05-15 03:41:16,938 - INFO - Updating previews
+2025-05-15 03:42:09,018 - INFO - Starting application
+2025-05-15 03:42:09,047 - INFO - Initializing UI
+2025-05-15 03:42:09,054 - INFO - UI initialization completed
+2025-05-15 03:42:10,008 - INFO - Application started successfully
+2025-05-15 03:42:11,637 - INFO - Opening file dialog for tileset
+2025-05-15 03:42:15,791 - INFO - Loading tileset from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:42:15,879 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:42:15,880 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:42:15,880 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:42:15,890 - INFO - Extracting palette from tileset
+2025-05-15 03:42:16,662 - INFO - Found 72 colors in palette
+2025-05-15 03:42:16,665 - INFO - Updating palette buttons
+2025-05-15 03:42:16,666 - INFO - Updating palette buttons
+2025-05-15 03:42:16,676 - INFO - Created 72 color buttons
+2025-05-15 03:42:16,677 - INFO - Updating previews
+2025-05-15 03:42:22,693 - INFO - Adding new section: section_0 at (0, 0) with size 32x32
+2025-05-15 03:42:22,694 - INFO - Changing to section: section_0
+2025-05-15 03:43:11,092 - INFO - Starting application
+2025-05-15 03:43:11,122 - INFO - Initializing UI
+2025-05-15 03:43:11,130 - INFO - UI initialization completed
+2025-05-15 03:43:12,114 - INFO - Application started successfully
+2025-05-15 03:43:14,084 - INFO - Opening file dialog for tileset
+2025-05-15 03:43:17,715 - INFO - Loading tileset from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:43:17,798 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:43:17,798 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:43:17,798 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:43:17,807 - INFO - Extracting palette from tileset
+2025-05-15 03:43:18,580 - INFO - Found 72 colors in palette
+2025-05-15 03:43:18,584 - INFO - Updating palette buttons
+2025-05-15 03:43:18,585 - INFO - Updating palette buttons
+2025-05-15 03:43:18,597 - INFO - Created 72 color buttons
+2025-05-15 03:43:18,598 - INFO - Updating previews
+2025-05-15 03:43:25,926 - INFO - Adding new section: section_0 at (0, 0) with size 32x32
+2025-05-15 03:43:25,926 - INFO - Changing to section: section_0
+2025-05-15 03:44:09,488 - INFO - Starting application
+2025-05-15 03:44:09,517 - INFO - Initializing UI
+2025-05-15 03:44:09,524 - INFO - UI initialization completed
+2025-05-15 03:44:10,448 - INFO - Application started successfully
+2025-05-15 03:44:13,099 - INFO - Opening file dialog for tileset
+2025-05-15 03:44:16,713 - INFO - Loading sprite from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:44:16,746 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:44:16,747 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:44:16,747 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:44:16,822 - INFO - Sprite loaded successfully
+2025-05-15 03:44:23,194 - INFO - Adding new section: section_0 at (0, 0) with size 32x32
+2025-05-15 03:44:23,194 - INFO - Updating palette buttons
+2025-05-15 03:44:23,194 - WARNING - No colors in palette to create buttons
+2025-05-15 03:44:23,194 - INFO - Changing to section: section_0
+2025-05-15 03:44:23,222 - INFO - Updating palette buttons
+2025-05-15 03:44:23,223 - WARNING - No colors in palette to create buttons
+2025-05-15 03:44:36,846 - INFO - Adding new palette 'palette_0' to section 'section_0'
+2025-05-15 03:44:36,846 - INFO - Updating palette buttons
+2025-05-15 03:44:36,847 - WARNING - No colors in palette to create buttons
+2025-05-15 03:44:36,847 - INFO - Changing to palette: palette_0
+2025-05-15 03:44:36,847 - INFO - Updating palette buttons
+2025-05-15 03:44:36,848 - INFO - Created 1 color buttons
+2025-05-15 03:44:36,894 - INFO - Updating palette buttons
+2025-05-15 03:44:36,895 - INFO - Created 1 color buttons
+2025-05-15 03:50:07,604 - INFO - Starting application
+2025-05-15 03:50:07,656 - INFO - Initializing UI
+2025-05-15 03:50:07,679 - INFO - UI initialization completed
+2025-05-15 03:50:08,769 - INFO - Application started successfully
+2025-05-15 03:50:11,831 - INFO - Opening file dialog for tileset
+2025-05-15 03:50:15,911 - INFO - Loading sprite from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:50:15,945 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:50:15,945 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:50:15,945 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:50:16,030 - INFO - Sprite loaded successfully
+2025-05-15 03:50:20,289 - INFO - Adding new section: section_0 at (99, 99) with size 21x99
+2025-05-15 03:50:20,290 - INFO - Updating palette buttons
+2025-05-15 03:50:20,290 - WARNING - No colors in palette to create buttons
+2025-05-15 03:50:20,290 - INFO - Changing to section: section_0
+2025-05-15 03:50:20,306 - INFO - Updating palette buttons
+2025-05-15 03:50:20,306 - WARNING - No colors in palette to create buttons
+2025-05-15 03:51:56,423 - INFO - Starting application
+2025-05-15 03:51:56,450 - INFO - Initializing UI
+2025-05-15 03:51:56,457 - INFO - UI initialization completed
+2025-05-15 03:51:57,445 - INFO - Application started successfully
+2025-05-15 03:52:00,098 - INFO - Opening file dialog for tileset
+2025-05-15 03:52:04,145 - INFO - Loading sprite from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:52:04,170 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:52:04,170 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:52:04,170 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:52:04,248 - INFO - Sprite loaded successfully
+2025-05-15 03:52:14,527 - INFO - Adding new section: section_0 at (99, 99) with size 38x99
+2025-05-15 03:52:14,528 - INFO - Updating palette buttons
+2025-05-15 03:52:14,528 - WARNING - No colors in palette to create buttons
+2025-05-15 03:52:14,528 - INFO - Changing to section: section_0
+2025-05-15 03:52:14,545 - INFO - Updating palette buttons
+2025-05-15 03:52:14,545 - WARNING - No colors in palette to create buttons
+2025-05-15 03:53:51,833 - INFO - Starting application
+2025-05-15 03:53:51,860 - INFO - Initializing UI
+2025-05-15 03:53:51,866 - INFO - UI initialization completed
+2025-05-15 03:53:52,876 - INFO - Application started successfully
+2025-05-15 03:53:55,549 - INFO - Opening file dialog for tileset
+2025-05-15 03:54:00,273 - INFO - Loading sprite from: D:/Game Development/Tilesets/TileSets/Amp_Plains.png
+2025-05-15 03:54:00,299 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:54:00,300 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 03:54:00,300 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 03:54:00,374 - INFO - Sprite loaded successfully
+2025-05-15 03:54:05,262 - INFO - Opening save dialog for tileset
+2025-05-15 03:54:32,984 - INFO - Saving tileset to: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 03:54:33,016 - INFO - Tileset saved successfully
+2025-05-15 03:54:42,716 - INFO - Adding new section: section_0 at (99, 99) with size 45x99
+2025-05-15 03:54:42,716 - INFO - Updating palette buttons
+2025-05-15 03:54:42,716 - WARNING - No colors in palette to create buttons
+2025-05-15 03:54:42,717 - INFO - Changing to section: section_0
+2025-05-15 03:54:44,978 - INFO - Updating palette buttons
+2025-05-15 03:54:44,978 - WARNING - No colors in palette to create buttons
+2025-05-15 03:54:44,999 - INFO - Updating palette buttons
+2025-05-15 03:54:44,999 - WARNING - No colors in palette to create buttons
+2025-05-15 03:54:54,415 - INFO - Adding new palette 'palette_0' to section 'section_0'
+2025-05-15 03:54:54,415 - INFO - Updating palette buttons
+2025-05-15 03:54:54,415 - WARNING - No colors in palette to create buttons
+2025-05-15 03:54:54,416 - INFO - Changing to palette: palette_0
+2025-05-15 03:54:54,416 - INFO - Updating palette buttons
+2025-05-15 03:54:54,420 - INFO - Created 18 color buttons
+2025-05-15 03:54:54,664 - INFO - Updating palette buttons
+2025-05-15 03:54:54,666 - INFO - Created 18 color buttons
+2025-05-15 03:56:50,690 - INFO - Starting application
+2025-05-15 03:56:50,719 - INFO - Initializing UI
+2025-05-15 03:56:50,726 - INFO - UI initialization completed
+2025-05-15 03:56:51,311 - INFO - Application started successfully
+2025-05-15 03:56:54,270 - INFO - Opening file dialog for tileset
+2025-05-15 03:56:57,027 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 03:56:57,052 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 03:56:57,053 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 03:56:57,122 - INFO - Sprite loaded successfully
+2025-05-15 03:57:04,590 - INFO - Adding new section: section_0 at (99, 99) with size 50x99
+2025-05-15 03:57:04,595 - INFO - Updating palette buttons
+2025-05-15 03:57:04,596 - WARNING - No colors in palette to create buttons
+2025-05-15 03:57:04,596 - INFO - Changing to section: section_0
+2025-05-15 03:57:06,499 - INFO - Updating palette buttons
+2025-05-15 03:57:06,499 - WARNING - No colors in palette to create buttons
+2025-05-15 03:57:06,520 - INFO - Updating palette buttons
+2025-05-15 03:57:06,521 - WARNING - No colors in palette to create buttons
+2025-05-15 03:57:06,525 - INFO - Updating palette buttons
+2025-05-15 03:57:06,525 - WARNING - No colors in palette to create buttons
+2025-05-15 03:57:06,525 - INFO - Changing to palette: palette_0
+2025-05-15 03:57:06,525 - INFO - Updating palette buttons
+2025-05-15 03:57:06,529 - INFO - Created 18 color buttons
+2025-05-15 03:57:06,791 - INFO - Updating palette buttons
+2025-05-15 03:57:06,794 - INFO - Created 18 color buttons
+2025-05-15 03:57:41,887 - INFO - Adding new palette 'palette_1' to section 'section_0'
+2025-05-15 03:57:41,888 - INFO - Updating palette buttons
+2025-05-15 03:57:41,888 - WARNING - No colors in palette to create buttons
+2025-05-15 03:57:41,888 - INFO - Changing to palette: palette_1
+2025-05-15 03:57:41,889 - INFO - Updating palette buttons
+2025-05-15 03:57:41,891 - INFO - Created 18 color buttons
+2025-05-15 03:57:42,147 - INFO - Updating palette buttons
+2025-05-15 03:57:42,150 - INFO - Created 18 color buttons
+2025-05-15 03:57:56,146 - INFO - Opening save dialog for tileset
+2025-05-15 03:57:59,921 - INFO - Saving tileset to: D:/Projeler/TilemapRecolor/aaaa.png
+2025-05-15 03:58:00,189 - INFO - Tileset saved successfully
+2025-05-15 04:00:55,160 - INFO - Starting application
+2025-05-15 04:00:55,192 - INFO - Initializing UI
+2025-05-15 04:00:55,199 - INFO - UI initialization completed
+2025-05-15 04:00:56,168 - INFO - Application started successfully
+2025-05-15 04:01:00,460 - INFO - Opening file dialog for tileset
+2025-05-15 04:01:02,772 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 04:01:02,802 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:01:02,802 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:01:02,872 - INFO - Sprite loaded successfully
+2025-05-15 04:01:16,888 - INFO - Adding new section: section_0 at (99, 99) with size 48x23
+2025-05-15 04:01:16,888 - INFO - Updating palette buttons
+2025-05-15 04:01:16,888 - WARNING - No colors in palette to create buttons
+2025-05-15 04:01:16,888 - INFO - Changing to section: section_0
+2025-05-15 04:01:19,108 - INFO - Updating palette buttons
+2025-05-15 04:01:19,109 - WARNING - No colors in palette to create buttons
+2025-05-15 04:01:19,128 - INFO - Updating palette buttons
+2025-05-15 04:01:19,129 - WARNING - No colors in palette to create buttons
+2025-05-15 04:01:19,130 - INFO - Updating palette buttons
+2025-05-15 04:01:19,130 - WARNING - No colors in palette to create buttons
+2025-05-15 04:01:19,131 - INFO - Changing to palette: palette_0
+2025-05-15 04:01:19,131 - INFO - Updating palette buttons
+2025-05-15 04:01:19,133 - INFO - Created 8 color buttons
+2025-05-15 04:01:19,323 - INFO - Updating palette buttons
+2025-05-15 04:01:19,325 - INFO - Created 8 color buttons
+2025-05-15 04:02:21,823 - INFO - Starting application
+2025-05-15 04:02:21,848 - INFO - Initializing UI
+2025-05-15 04:02:21,856 - INFO - UI initialization completed
+2025-05-15 04:02:22,821 - INFO - Application started successfully
+2025-05-15 04:02:25,447 - INFO - Opening file dialog for tileset
+2025-05-15 04:02:29,236 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 04:02:29,261 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:02:29,262 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:02:29,327 - INFO - Sprite loaded successfully
+2025-05-15 04:02:37,279 - INFO - Adding new section: section_0 at (99, 99) with size 50x99
+2025-05-15 04:02:37,279 - INFO - Updating palette buttons
+2025-05-15 04:02:37,279 - WARNING - No colors in palette to create buttons
+2025-05-15 04:02:37,279 - INFO - Changing to section: section_0
+2025-05-15 04:02:38,723 - INFO - Updating palette buttons
+2025-05-15 04:02:38,724 - WARNING - No colors in palette to create buttons
+2025-05-15 04:02:38,745 - INFO - Updating palette buttons
+2025-05-15 04:02:38,745 - WARNING - No colors in palette to create buttons
+2025-05-15 04:02:38,749 - INFO - Updating palette buttons
+2025-05-15 04:02:38,750 - WARNING - No colors in palette to create buttons
+2025-05-15 04:02:38,750 - INFO - Changing to palette: palette_0
+2025-05-15 04:02:38,750 - INFO - Updating palette buttons
+2025-05-15 04:02:38,753 - INFO - Created 18 color buttons
+2025-05-15 04:02:39,008 - INFO - Updating palette buttons
+2025-05-15 04:02:39,011 - INFO - Created 18 color buttons
+2025-05-15 04:08:45,490 - INFO - Starting application
+2025-05-15 04:08:45,527 - INFO - Initializing UI
+2025-05-15 04:08:45,537 - INFO - UI initialization completed
+2025-05-15 04:08:46,630 - INFO - Application started successfully
+2025-05-15 04:08:49,690 - INFO - Opening file dialog for tileset
+2025-05-15 04:08:52,404 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 04:08:52,436 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:08:52,437 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:08:52,504 - INFO - Sprite loaded successfully
+2025-05-15 04:09:06,221 - INFO - Adding new section: section_0 at (99, 99) with size 67x99
+2025-05-15 04:09:06,221 - INFO - Updating palette buttons
+2025-05-15 04:09:06,221 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:06,221 - INFO - Changing to section: section_0
+2025-05-15 04:09:07,947 - INFO - Updating palette buttons
+2025-05-15 04:09:07,948 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:07,968 - INFO - Updating palette buttons
+2025-05-15 04:09:07,968 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:07,972 - INFO - Updating palette buttons
+2025-05-15 04:09:07,973 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:07,973 - INFO - Changing to palette: palette_0
+2025-05-15 04:09:07,973 - INFO - Updating palette buttons
+2025-05-15 04:09:07,976 - INFO - Created 18 color buttons
+2025-05-15 04:09:08,231 - INFO - Updating palette buttons
+2025-05-15 04:09:08,233 - INFO - Created 18 color buttons
+2025-05-15 04:09:14,473 - INFO - Starting application
+2025-05-15 04:09:14,507 - INFO - Initializing UI
+2025-05-15 04:09:14,515 - INFO - UI initialization completed
+2025-05-15 04:09:15,523 - INFO - Application started successfully
+2025-05-15 04:09:19,602 - INFO - Opening file dialog for tileset
+2025-05-15 04:09:22,255 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 04:09:22,282 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:09:22,282 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:09:22,354 - INFO - Sprite loaded successfully
+2025-05-15 04:09:45,836 - INFO - Adding new section: section_0 at (99, 99) with size 89x76
+2025-05-15 04:09:45,837 - INFO - Updating palette buttons
+2025-05-15 04:09:45,837 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:45,837 - INFO - Changing to section: section_0
+2025-05-15 04:09:48,674 - INFO - Updating palette buttons
+2025-05-15 04:09:48,675 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:48,692 - INFO - Updating palette buttons
+2025-05-15 04:09:48,693 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:48,699 - INFO - Updating palette buttons
+2025-05-15 04:09:48,699 - WARNING - No colors in palette to create buttons
+2025-05-15 04:09:48,699 - INFO - Changing to palette: palette_0
+2025-05-15 04:09:48,700 - INFO - Updating palette buttons
+2025-05-15 04:09:48,703 - INFO - Created 18 color buttons
+2025-05-15 04:09:48,960 - INFO - Updating palette buttons
+2025-05-15 04:09:48,962 - INFO - Created 18 color buttons
+2025-05-15 04:11:24,098 - INFO - Starting application
+2025-05-15 04:11:24,125 - INFO - Initializing UI
+2025-05-15 04:11:24,132 - INFO - UI initialization completed
+2025-05-15 04:11:25,131 - INFO - Application started successfully
+2025-05-15 04:11:28,496 - INFO - Opening file dialog for tileset
+2025-05-15 04:11:31,167 - INFO - Loading sprite from: D:/Projeler/TilemapRecolor/test.png
+2025-05-15 04:11:31,196 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:11:31,196 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:11:31,263 - INFO - Sprite loaded successfully
+2025-05-15 04:11:36,193 - INFO - Adding new section: section_0 at (99, 99) with size 92x99
+2025-05-15 04:11:36,194 - INFO - Updating palette buttons
+2025-05-15 04:11:36,194 - WARNING - No colors in palette to create buttons
+2025-05-15 04:11:36,194 - INFO - Changing to section: section_0
+2025-05-15 04:11:37,304 - INFO - Updating palette buttons
+2025-05-15 04:11:37,305 - WARNING - No colors in palette to create buttons
+2025-05-15 04:11:37,321 - INFO - Updating palette buttons
+2025-05-15 04:11:37,322 - WARNING - No colors in palette to create buttons
+2025-05-15 04:11:37,328 - INFO - Updating palette buttons
+2025-05-15 04:11:37,329 - WARNING - No colors in palette to create buttons
+2025-05-15 04:11:37,329 - INFO - Changing to palette: palette_0
+2025-05-15 04:11:37,329 - INFO - Updating palette buttons
+2025-05-15 04:11:37,333 - INFO - Created 18 color buttons
+2025-05-15 04:11:37,586 - INFO - Updating palette buttons
+2025-05-15 04:11:37,589 - INFO - Created 18 color buttons
+2025-05-15 04:15:55,074 - INFO - Starting application
+2025-05-15 04:15:56,168 - INFO - Application started successfully
+2025-05-15 04:16:10,476 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:16:10,476 - DEBUG - STREAM b'IDAT' 41 65536
+2025-05-15 04:19:24,645 - INFO - Starting application
+2025-05-15 04:19:25,660 - INFO - Application started successfully
+2025-05-15 04:19:33,177 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:19:33,177 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 04:19:33,178 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 04:29:33,821 - INFO - Starting application
+2025-05-15 04:29:34,498 - INFO - Application started successfully
+2025-05-15 04:29:42,309 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:29:42,309 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 04:29:42,309 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 04:31:06,745 - INFO - Starting application
+2025-05-15 04:31:07,787 - INFO - Application started successfully
+2025-05-15 04:31:13,830 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:31:13,831 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 04:31:13,831 - DEBUG - STREAM b'IDAT' 54 8192
+2025-05-15 04:33:15,586 - INFO - Starting application
+2025-05-15 04:33:16,695 - INFO - Application started successfully
+2025-05-15 04:33:28,619 - DEBUG - STREAM b'IHDR' 16 13
+2025-05-15 04:33:28,620 - DEBUG - STREAM b'sRGB' 41 1
+2025-05-15 04:33:28,620 - DEBUG - STREAM b'IDAT' 54 8192

@@ -3,12 +3,14 @@ import os
 import logging
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                             QHBoxLayout, QPushButton, QLabel, QFileDialog, 
-                            QColorDialog, QScrollArea, QGridLayout, QMessageBox)
-from PyQt5.QtGui import QPixmap, QImage, QColor
-from PyQt5.QtCore import Qt
+                            QColorDialog, QScrollArea, QGridLayout, QMessageBox,
+                            QComboBox, QGroupBox, QSpinBox, QSizePolicy)
+from PyQt5.QtGui import QPixmap, QImage, QColor, QPainter, QPen, QPalette
+from PyQt5.QtCore import Qt, QRect, QPoint
 from PIL import Image
 import numpy as np
 from tileset_recolor import TilesetRecolor
+from palette_config import SpritePaletteConfig, SpriteSection, ColorPalette
 
 # Set up logging
 logging.basicConfig(
@@ -40,206 +42,343 @@ class ColorButton(QPushButton):
             logging.error(f"Error changing color: {str(e)}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Error changing color: {str(e)}")
 
+class InteractiveSpriteView(QLabel):
+    def __init__(self, main_window, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.main_window = main_window
+        self.setMouseTracking(True)
+        self.setAlignment(Qt.AlignCenter)
+        self.sprite_pixmap = None
+        self.sections = []  # List of (name, QRect)
+        self.selected_section = None
+        self.drawing = False
+        self.start_point = None
+        self.end_point = None
+
+    def set_sprite(self, pixmap):
+        self.sprite_pixmap = pixmap
+        self.update()
+
+    def set_sections(self, sections, selected_name=None):
+        self.sections = [(name, QRect(x, y, w, h)) for name, (x, y, w, h) in sections]
+        self.selected_section = selected_name
+        self.update()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drawing = True
+            self.start_point = event.pos()
+            self.end_point = event.pos()
+            self.update()
+        elif event.button() == Qt.RightButton:
+            # Section selection
+            for name, rect in self.sections:
+                if rect.contains(event.pos()):
+                    self.main_window.select_section_from_view(name)
+                    break
+
+    def mouseMoveEvent(self, event):
+        if self.drawing:
+            self.end_point = event.pos()
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        if self.drawing and self.start_point and self.end_point:
+            rect = QRect(self.start_point, self.end_point).normalized()
+            self.drawing = False
+            self.start_point = None
+            self.end_point = None
+            # Bildir: yeni bölüm eklensin
+            self.main_window.add_section_from_view(rect)
+            self.update()
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        if self.sprite_pixmap:
+            # Sprite'ı ortala
+            pixmap = self.sprite_pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            x = (self.width() - pixmap.width()) // 2
+            y = (self.height() - pixmap.height()) // 2
+            painter.drawPixmap(x, y, pixmap)
+            scale_x = pixmap.width() / self.sprite_pixmap.width()
+            scale_y = pixmap.height() / self.sprite_pixmap.height()
+            # Bölümleri çiz
+            for name, rect in self.sections:
+                pen = QPen(Qt.red if name == self.selected_section else Qt.green, 2)
+                painter.setPen(pen)
+                rx = int(rect.x() * scale_x + x)
+                ry = int(rect.y() * scale_y + y)
+                rw = int(rect.width() * scale_x)
+                rh = int(rect.height() * scale_y)
+                painter.drawRect(rx, ry, rw, rh)
+            # Çizim sırasında geçici dikdörtgen
+            if self.drawing and self.start_point and self.end_point:
+                pen = QPen(Qt.blue, 2, Qt.DashLine)
+                painter.setPen(pen)
+                temp_rect = QRect(self.start_point, self.end_point).normalized()
+                painter.drawRect(temp_rect)
+        painter.end()
+
+class TileMapView(QWidget):
+    def __init__(self, main_window, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.main_window = main_window
+        self.setMouseTracking(True)
+        self.zoom = 8  # 1 pixel = 8x8 px on screen
+        self.offset = QPoint(0, 0)
+        self.dragging = False
+        self.last_mouse_pos = None
+        self.tileset_img = None  # numpy array (H, W, 3)
+        self.selected_color = (0, 0, 0)
+        self.undo_stack = []
+
+    def set_tileset(self, img_array):
+        self.tileset_img = img_array.copy()
+        self.update()
+
+    def set_selected_color(self, color):
+        self.selected_color = color
+
+    def paintEvent(self, event):
+        if self.tileset_img is None:
+            return
+        painter = QPainter(self)
+        h, w, _ = self.tileset_img.shape
+        # NumPy array'den QImage oluştur
+        qim = QImage(self.tileset_img.data, w, h, 3 * w, QImage.Format_RGB888)
+        # Zoom ve offset uygula
+        target_rect = QRect(self.offset.x(), self.offset.y(), w * self.zoom, h * self.zoom)
+        painter.drawImage(target_rect, qim)
+        # Grid çizgileri
+        pen = QPen(Qt.gray, 1)
+        painter.setPen(pen)
+        for y in range(h + 1):
+            painter.drawLine(self.offset.x(), self.offset.y() + y * self.zoom, self.offset.x() + w * self.zoom, self.offset.y() + y * self.zoom)
+        for x in range(w + 1):
+            painter.drawLine(self.offset.x() + x * self.zoom, self.offset.y(), self.offset.x() + x * self.zoom, self.offset.y() + h * self.zoom)
+        painter.end()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.edit_pixel(event.pos())
+        elif event.button() == Qt.RightButton:
+            self.dragging = True
+            self.last_mouse_pos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if self.dragging and self.last_mouse_pos:
+            delta = event.pos() - self.last_mouse_pos
+            self.offset += delta
+            self.last_mouse_pos = event.pos()
+            self.update()
+        elif event.buttons() & Qt.LeftButton:
+            self.edit_pixel(event.pos())
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.dragging = False
+            self.last_mouse_pos = None
+
+    def wheelEvent(self, event):
+        old_zoom = self.zoom
+        if event.angleDelta().y() > 0:
+            self.zoom = min(64, self.zoom + 1)
+        else:
+            self.zoom = max(1, self.zoom - 1)
+        # Zoom merkezini mouse konumuna göre ayarla
+        if self.tileset_img is not None and old_zoom != self.zoom:
+            mouse_pos = event.pos()
+            h, w, _ = self.tileset_img.shape
+            rel_x = (mouse_pos.x() - self.offset.x()) / old_zoom
+            rel_y = (mouse_pos.y() - self.offset.y()) / old_zoom
+            self.offset = QPoint(
+                int(mouse_pos.x() - rel_x * self.zoom),
+                int(mouse_pos.y() - rel_y * self.zoom)
+            )
+        self.update()
+
+    def edit_pixel(self, pos):
+        if self.tileset_img is None:
+            return
+        x = (pos.x() - self.offset.x()) // self.zoom
+        y = (pos.y() - self.offset.y()) // self.zoom
+        h, w, _ = self.tileset_img.shape
+        if 0 <= x < w and 0 <= y < h:
+            # Undo stack
+            self.undo_stack.append((x, y, tuple(self.tileset_img[y, x])))
+            self.tileset_img[y, x] = self.selected_color
+            self.update()
+            self.main_window.update_tileset_from_grid(self.tileset_img)
+
+    def undo(self):
+        if self.undo_stack:
+            x, y, old_color = self.undo_stack.pop()
+            self.tileset_img[y, x] = old_color
+            self.update()
+            self.main_window.update_tileset_from_grid(self.tileset_img)
+
 class TilesetRecolorGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.recolorer = TilesetRecolor()
-        self.color_buttons = []
-        self.original_palette = []
+        self.palette = []
+        self.current_palette_color = (0, 0, 0)
         self.init_ui()
 
     def init_ui(self):
         try:
-            logging.info("Initializing UI")
-            self.setWindowTitle('Tileset Recolor Tool')
-            self.setGeometry(100, 100, 1200, 800)
-
-            # Create central widget and main layout
+            self.setWindowTitle('Sprite Palette Editor')
+            self.setGeometry(100, 100, 1400, 800)
             central_widget = QWidget()
             self.setCentralWidget(central_widget)
             main_layout = QHBoxLayout(central_widget)
 
-            # Left panel for controls
+            # Left panel for palette (compact)
             left_panel = QWidget()
+            left_panel.setFixedWidth(220)
             left_layout = QVBoxLayout(left_panel)
-            
-            # Load tileset button
-            load_btn = QPushButton('Load Tileset')
+            load_btn = QPushButton('Load Sprite')
             load_btn.clicked.connect(self.load_tileset)
             left_layout.addWidget(load_btn)
+            save_btn = QPushButton('Save Sprite')
+            save_btn.clicked.connect(self.save_tileset)
+            left_layout.addWidget(save_btn)
+            undo_btn = QPushButton('Undo')
+            undo_btn.clicked.connect(self.undo)
+            left_layout.addWidget(undo_btn)
+            # Palette management
+            self.palette_combo = QComboBox()
+            self.palette_combo.currentIndexChanged.connect(self.on_palette_changed)
+            left_layout.addWidget(self.palette_combo)
+            add_palette_btn = QPushButton('Add New Palette')
+            add_palette_btn.clicked.connect(self.add_new_palette)
+            left_layout.addWidget(add_palette_btn)
+            # Palette grid in a scroll area (max height)
+            self.palette_grid_widget = QWidget()
+            self.palette_grid = QGridLayout(self.palette_grid_widget)
+            self.palette_grid.setContentsMargins(0, 0, 0, 0)
+            self.palette_grid.setSpacing(4)
+            palette_scroll = QScrollArea()
+            palette_scroll.setWidgetResizable(True)
+            palette_scroll.setWidget(self.palette_grid_widget)
+            palette_scroll.setMaximumHeight(180)
+            left_layout.addWidget(palette_scroll)
+            left_panel.setLayout(left_layout)
 
-            # Save palette button
-            save_palette_btn = QPushButton('Save Palette')
-            save_palette_btn.clicked.connect(self.save_palette)
-            left_layout.addWidget(save_palette_btn)
-
-            # Save tileset button
-            save_tileset_btn = QPushButton('Save Recolored Tileset')
-            save_tileset_btn.clicked.connect(self.save_tileset)
-            left_layout.addWidget(save_tileset_btn)
-
-            # Color palette area
-            self.palette_scroll = QScrollArea()
-            self.palette_widget = QWidget()
-            self.palette_layout = QGridLayout(self.palette_widget)
-            self.palette_scroll.setWidget(self.palette_widget)
-            self.palette_scroll.setWidgetResizable(True)
-            left_layout.addWidget(self.palette_scroll)
-
-            # Right panel for preview
+            # Right panel for grid
             right_panel = QWidget()
             right_layout = QVBoxLayout(right_panel)
-            
-            # Original tileset preview
-            self.original_label = QLabel('Original Tileset')
-            self.original_label.setAlignment(Qt.AlignCenter)
-            right_layout.addWidget(self.original_label)
-            
-            # Recolored tileset preview
-            self.recolored_label = QLabel('Recolored Tileset')
-            self.recolored_label.setAlignment(Qt.AlignCenter)
-            right_layout.addWidget(self.recolored_label)
+            self.tilemap_view = TileMapView(self)
+            self.tilemap_scroll = QScrollArea()
+            self.tilemap_scroll.setWidgetResizable(True)
+            self.tilemap_scroll.setWidget(self.tilemap_view)
+            right_layout.addWidget(self.tilemap_scroll)
+            right_panel.setLayout(right_layout)
 
-            # Add panels to main layout
-            main_layout.addWidget(left_panel, 1)
-            main_layout.addWidget(right_panel, 2)
-            logging.info("UI initialization completed")
+            main_layout.addWidget(left_panel, 0)
+            main_layout.addWidget(right_panel, 1)
+
+            # Palette data
+            self.palettes = []  # List[List[Tuple[int, int, int]]]
+            self.current_palette_index = 0
         except Exception as e:
             logging.error("Error initializing UI", exc_info=True)
             QMessageBox.critical(self, "Error", f"Error initializing UI: {str(e)}")
 
     def load_tileset(self):
         try:
-            logging.info("Opening file dialog for tileset")
-            file_path, _ = QFileDialog.getOpenFileName(self, 'Load Tileset', '', 'Image Files (*.png *.jpg *.bmp)')
+            file_path, _ = QFileDialog.getOpenFileName(self, 'Load Sprite', '', 'Image Files (*.png *.jpg *.bmp)')
             if file_path:
-                logging.info(f"Loading tileset from: {file_path}")
-                # Load image directly with QImage first
-                qimage = QImage(file_path)
-                if qimage.isNull():
-                    raise Exception("Failed to load image")
-                
-                # Convert to PIL Image for processing
                 self.recolorer.load_tileset(file_path)
-                
-                logging.info("Extracting palette from tileset")
-                self.original_palette = self.recolorer.extract_palette()
-                logging.info(f"Found {len(self.original_palette)} colors in palette")
-                
-                if not self.original_palette:
-                    logging.warning("No colors found in the tileset")
-                    QMessageBox.warning(self, "Warning", "No colors found in the tileset!")
-                    return
-                
-                # Set the original image preview
-                self.original_label.setPixmap(QPixmap.fromImage(qimage).scaled(400, 400, Qt.KeepAspectRatio))
-                
-                logging.info("Updating palette buttons")
+                img_array = np.array(self.recolorer.tileset)
+                self.tilemap_view.set_tileset(img_array)
+                palette = self.recolorer.extract_palette()
+                self.palettes = [palette]
+                self.current_palette_index = 0
+                self.update_palette_combo()
                 self.update_palette_buttons()
-                logging.info("Updating previews")
-                self.update_preview()
         except Exception as e:
-            logging.error("Error loading tileset", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Error loading tileset: {str(e)}")
-
-    def update_palette_buttons(self):
-        try:
-            logging.info("Updating palette buttons")
-            # Clear existing buttons
-            for button in self.color_buttons:
-                button.deleteLater()
-            self.color_buttons.clear()
-
-            # Create new buttons
-            for i, color in enumerate(self.original_palette):
-                button = ColorButton(color, self)
-                self.palette_layout.addWidget(button, i // 4, i % 4)
-                self.color_buttons.append(button)
-            logging.info(f"Created {len(self.color_buttons)} color buttons")
-        except Exception as e:
-            logging.error("Error updating palette buttons", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Error updating palette buttons: {str(e)}")
-
-    def update_preview(self):
-        try:
-            if self.recolorer.tileset and self.color_buttons:
-                logging.info("Creating color mapping")
-                # Create color mapping from current button colors
-                new_palette = [button.color for button in self.color_buttons]
-                color_mapping = self.recolorer.create_color_mapping(self.original_palette, new_palette)
-                
-                logging.info("Recoloring tileset")
-                # Recolor tileset
-                recolored = self.recolorer.recolor_tileset(color_mapping)
-                
-                logging.info("Converting recolored tileset to pixmap")
-                # Convert PIL image to QImage
-                img_array = np.array(recolored)
-                height, width, channel = img_array.shape
-                bytes_per_line = 3 * width
-                qim = QImage(img_array.data, width, height, bytes_per_line, QImage.Format_RGB888)
-                
-                # Show recolored tileset
-                self.recolored_label.setPixmap(QPixmap.fromImage(qim).scaled(400, 400, Qt.KeepAspectRatio))
-        except Exception as e:
-            logging.error("Error updating preview", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Error updating preview: {str(e)}")
-
-    def save_palette(self):
-        try:
-            if not self.color_buttons:
-                logging.warning("No palette to save")
-                QMessageBox.warning(self, "Warning", "No palette to save!")
-                return
-                
-            logging.info("Opening save dialog for palette")
-            file_path, _ = QFileDialog.getSaveFileName(self, 'Save Palette', '', 'PNG Files (*.png)')
-            if file_path:
-                logging.info(f"Saving palette to: {file_path}")
-                new_palette = [button.color for button in self.color_buttons]
-                self.recolorer.save_palette_as_image(new_palette, file_path)
-                logging.info("Palette saved successfully")
-                QMessageBox.information(self, "Success", "Palette saved successfully!")
-        except Exception as e:
-            logging.error("Error saving palette", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Error saving palette: {str(e)}")
+            logging.error("Error loading sprite", exc_info=True)
+            QMessageBox.critical(self, "Error", f"Error loading sprite: {str(e)}")
 
     def save_tileset(self):
         try:
-            if not self.recolorer.tileset:
-                logging.warning("No tileset loaded")
-                QMessageBox.warning(self, "Warning", "No tileset loaded!")
-                return
-                
-            logging.info("Opening save dialog for tileset")
-            file_path, _ = QFileDialog.getSaveFileName(self, 'Save Tileset', '', 'PNG Files (*.png)')
+            file_path, _ = QFileDialog.getSaveFileName(self, 'Save Sprite', '', 'PNG Files (*.png)')
             if file_path:
-                logging.info(f"Saving tileset to: {file_path}")
-                new_palette = [button.color for button in self.color_buttons]
-                color_mapping = self.recolorer.create_color_mapping(self.original_palette, new_palette)
-                recolored = self.recolorer.recolor_tileset(color_mapping)
-                self.recolorer.save_recolored_tileset(recolored, file_path)
-                logging.info("Tileset saved successfully")
-                QMessageBox.information(self, "Success", "Tileset saved successfully!")
+                img = Image.fromarray(self.tilemap_view.tileset_img)
+                img.save(file_path)
         except Exception as e:
-            logging.error("Error saving tileset", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Error saving tileset: {str(e)}")
+            logging.error("Error saving sprite", exc_info=True)
+            QMessageBox.critical(self, "Error", f"Error saving sprite: {str(e)}")
 
-    @staticmethod
-    def pil2pixmap(pil_image):
-        try:
-            logging.debug("Converting PIL image to QPixmap")
-            # Convert PIL image to numpy array
-            img_array = np.array(pil_image)
-            height, width, channel = img_array.shape
-            bytes_per_line = 3 * width
-            
-            # Create QImage from numpy array
-            qim = QImage(img_array.data, width, height, bytes_per_line, QImage.Format_RGB888)
-            return QPixmap.fromImage(qim)
-        except Exception as e:
-            logging.error(f"Error converting image: {str(e)}", exc_info=True)
-            raise Exception(f"Error converting image: {str(e)}")
+    def update_palette_combo(self):
+        self.palette_combo.blockSignals(True)
+        self.palette_combo.clear()
+        for i in range(len(self.palettes)):
+            self.palette_combo.addItem(f"Palette {i+1}")
+        self.palette_combo.setCurrentIndex(self.current_palette_index)
+        self.palette_combo.blockSignals(False)
+
+    def add_new_palette(self):
+        # Yeni palet: ilk paletin renklerinin kopyasıyla başlasın
+        if self.palettes:
+            new_palette = list(self.palettes[self.current_palette_index])
+        else:
+            new_palette = []
+        self.palettes.append(new_palette)
+        self.current_palette_index = len(self.palettes) - 1
+        self.update_palette_combo()
+        self.update_palette_buttons()
+
+    def on_palette_changed(self, idx):
+        if 0 <= idx < len(self.palettes):
+            self.current_palette_index = idx
+            self.update_palette_buttons()
+
+    def update_palette_buttons(self):
+        # Remove old buttons
+        for i in reversed(range(self.palette_grid.count())):
+            widget = self.palette_grid.itemAt(i).widget()
+            if widget:
+                widget.deleteLater()
+        # Yatayda mevcut renkler (tek satır)
+        palette = self.palettes[self.current_palette_index] if self.palettes else []
+        for i, color in enumerate(palette):
+            btn = QPushButton()
+            btn.setFixedSize(24, 24)
+            btn.setStyleSheet(f"background-color: rgb({color[0]}, {color[1]}, {color[2]}); border: 1px solid black;")
+            btn.clicked.connect(lambda _, c=color: self.select_palette_color(c))
+            self.palette_grid.addWidget(btn, 0, i)
+        # Dikeyde boş kutular (örnek: 4 adet)
+        empty_slots = 4
+        for j in range(empty_slots):
+            empty_btn = QPushButton("+")
+            empty_btn.setFixedSize(24, 24)
+            empty_btn.setStyleSheet("background-color: #eee; border: 1px dashed #888;")
+            empty_btn.clicked.connect(lambda _, idx=j: self.add_new_palette_color())
+            self.palette_grid.addWidget(empty_btn, j + 1, 0)
+        if palette:
+            self.select_palette_color(palette[0])
+
+    def add_new_palette_color(self):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            rgb = (color.red(), color.green(), color.blue())
+            if self.palettes:
+                self.palettes[self.current_palette_index].append(rgb)
+                self.update_palette_buttons()
+
+    def select_palette_color(self, color):
+        self.current_palette_color = color
+        self.tilemap_view.set_selected_color(color)
+
+    def update_tileset_from_grid(self, img_array):
+        # Anında güncelleme için (ileride başka görsel alanlar eklenirse buradan yapılabilir)
+        pass
+
+    def undo(self):
+        self.tilemap_view.undo()
 
 def main():
     try:
